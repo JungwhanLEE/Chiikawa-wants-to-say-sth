@@ -2,18 +2,19 @@
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const rates = {easy:6, normal:8, hard:10};
-  // Four expression and caption transitions share the same 25% thresholds.
+  // Five synchronized art/caption phases at 20% intervals.
   // The original stage1 artwork is omitted from gameplay.
   const stages = [
     {image:"chiikawa_stage2",label:"발그레...",speech:"우..."},
     {image:"chiikawa_stage3",label:"꾸물꾸물...",speech:"우...우..."},
     {image:"chiikawa_stage4",label:"우물쭈물...",speech:"우...우아아..."},
-    {image:"chiikawa_stage5",label:"울먹울먹...",speech:"아아...아아아..."}
+    {image:"chiikawa_stage5",label:"울먹울먹...",speech:"아아...아아아..."},
+    {image:"chiikawa_stage6",label:"그렁그렁...",speech:"아아아아아..."}
   ];
   function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
   function decode(s){const raw=atob(s.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))))}
   // Preload all artwork that the game may show, retaining a decoded copy.
-  // stage6 is the message ending, escape is the runaway ending; stage1 is unused.
+  // Stage6 also appears in the message ending; escape is the runaway ending; stage1 is unused.
   const characterDir = "assets/characters/";
   const artworkNames = ['chiikawa_stage2','chiikawa_stage3','chiikawa_stage4',
     'chiikawa_stage5','chiikawa_stage6','chiikawa_escape'];
@@ -30,9 +31,10 @@
     return [name, {url: image.src, ready}];
   }));
 
-  // Prevent expressions from oscillating as the gauge hovers near 25/50/75%.
+  // Prevent expressions from oscillating near the 20/40/60/80% boundaries.
   const MIN_STAGE_HOLD_MS = 850;  // Keep each changed expression for at least 0.85s.
   const DOWNWARD_BUFFER = 4;     // Require 4 percentage points below a boundary to go back.
+  const STAGE_INTERVAL = 100 / stages.length;
   let visibleStageIndex = 0;
   let holdUntil = 0;
   let requestedScene = "";
@@ -119,8 +121,8 @@
     // While a frame is locked, the gauge still changes normally.
     if (now < holdUntil) return visibleStageIndex;
     let index = visibleStageIndex;
-    while (index < stages.length - 1 && value >= (index + 1) * 25) index++;
-    while (index > 0 && value < index * 25 - DOWNWARD_BUFFER) index--;
+    while (index < stages.length - 1 && value >= (index + 1) * STAGE_INTERVAL) index++;
+    while (index > 0 && value < index * STAGE_INTERVAL - DOWNWARD_BUFFER) index--;
     return index;
   }
 
