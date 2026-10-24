@@ -24,7 +24,6 @@ button { font-size: 17px; }
 /* Unmodified original PNG illustrations; size/position are controlled only by CSS. */
 .character {height: 330px; gap: 5px; padding: 16px 12px;}
 .character #stageImage {display:block; width:auto; max-width:100%; height:245px; object-fit:contain;}
-.character #stageLabel {margin:2px 0 0; flex-shrink:0;}
 @media(max-width:400px) {
   .character {height:300px;}
   .character #stageImage {height:220px;}
@@ -39,4 +38,82 @@ button { font-size: 17px; }
   color: #9d4f70;
   background: #fff8fa;
   border-color: #efd3dd;
+}
+
+/* Hand-drawn comic dialogue bubble next to the original PNG artwork. */
+.character {
+  position: relative;
+  height: 325px;
+  padding: 18px 10px 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;
+}
+.character #stageImage {
+  display: block;
+  width: auto;
+  height: 243px;
+  max-width: 82%;
+  object-fit: contain;
+  transform: translateX(-19px);
+}
+.speech-bubble {
+  position: absolute;
+  top: 16px;
+  right: 12px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 65px;
+  width: max-content;
+  max-width: 56%;
+  padding: 9px 16px;
+  background: #fff;
+  border: 2px solid #634751;
+  border-radius: 48% 52% 50% 50% / 54% 56% 44% 46%;
+  box-shadow: 2px 3px 0 #f4dbe5;
+  transform: rotate(4deg);
+}
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  left: 26%;
+  bottom: -11px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-left: 2px solid #634751;
+  border-bottom: 2px solid #634751;
+  border-bottom-left-radius: 3px;
+  transform: rotate(-34deg) skewY(-7deg);
+}
+.speech-bubble .speech {
+  display: block;
+  margin: 0;
+  min-height: 0;
+  font-family: "Gaegu", "Apple SD Gothic Neo", sans-serif;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#stageLabel.stage-caption {
+  margin: 9px 0 3px;
+  min-height: 36px;
+  font-family: "Jua", system-ui, -apple-system, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: center;
+}
+@media (max-width: 400px) {
+  .character { height: 298px; padding: 18px 6px 12px; }
+  .character #stageImage { height: 214px; max-width: 82%; transform: translateX(-12px); }
+  .speech-bubble { top: 12px; right: 7px; min-height: 58px; padding: 8px 11px; max-width: 60%; }
+  .speech-bubble .speech { font-size: 22px; }
+  #stageLabel.stage-caption { font-size: 23px; }
 }
