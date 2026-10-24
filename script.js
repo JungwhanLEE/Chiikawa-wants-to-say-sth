@@ -123,7 +123,7 @@
     $('endingBox').classList.remove('escape-ending');
     $('endingTitle').classList.remove('hidden');
     $('endingQuote').classList.add('hidden');
-    $('stageLabel').classList.remove('hidden');
+    // Stage captions become visible together with the decoded first artwork.
     render();frame=requestAnimationFrame(tick);
   }
   $('tap').addEventListener('click',()=>{
