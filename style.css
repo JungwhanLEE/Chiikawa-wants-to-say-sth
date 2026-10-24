@@ -20,3 +20,15 @@ button { font-size: 17px; }
 .speech { font-size: 27px; }
 .ending p { font-size: 21px; line-height: 1.6; }
 .meterhead strong { font-size: 20px; }
+
+/* Unmodified original PNG illustrations; size/position are controlled only by CSS. */
+.character {height: 330px; gap: 5px; padding: 16px 12px;}
+.character #stageImage {display:block; width:auto; max-width:100%; height:245px; object-fit:contain;}
+.character #stageLabel {margin:2px 0 0; flex-shrink:0;}
+.character #stageEmoji {line-height:245px;}
+.character #imageNotice {font-size:12px; text-align:center;}
+@media(max-width:400px) {
+  .character {height:300px;}
+  .character #stageImage {height:220px;}
+  .character #stageEmoji {line-height:220px;}
+}
