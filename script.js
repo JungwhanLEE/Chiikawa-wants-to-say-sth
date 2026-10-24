@@ -10,6 +10,28 @@
   ];
   function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
   function decode(s){const raw=atob(s.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))))}
+  // Artwork is loaded from replaceable PNG files; four text phases remain separate.
+  const characterDir = "assets/characters/";
+  let currentCharacter = "";
+  function setCharacter(name) {
+    if (currentCharacter === name) return;
+    currentCharacter = name;
+    const picture = $('stageImage');
+    picture.classList.add('hidden');
+    $('stageEmoji').classList.remove('hidden');
+    $('imageNotice').classList.remove('hidden');
+    picture.onload = () => {
+      picture.classList.remove('hidden');
+      $('stageEmoji').classList.add('hidden');
+      $('imageNotice').classList.add('hidden');
+    };
+    picture.onerror = () => {
+      picture.classList.add('hidden');
+      $('stageEmoji').classList.remove('hidden');
+      $('imageNotice').classList.remove('hidden');
+    };
+    picture.src = characterDir + name + ".png";
+  }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0;
   function render(){
@@ -17,6 +39,10 @@
     $('percent').textContent=Math.round(value)+'%';$('bar').style.width=value+'%';
     $('meter').setAttribute('aria-valuenow',Math.round(value));
     $('stageLabel').textContent=stage.label;$('stageEmoji').textContent=stage.icon;
+    if(!finished){
+      const imageStage=Math.min(6,Math.floor(Math.min(value,99.999)/ (100/6))+1);
+      setCharacter('chiikawa_stage'+imageStage);
+    }
     if(!finished)$('speech').textContent=stage.speech;
   }
   function tick(t){
@@ -41,6 +67,7 @@
       $('endingText').textContent=config.ending==='escape'?'치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.\n\n"왜 애를 울려!"':config.message;
       $('speech').textContent=config.ending==='escape'?'우와아아앙!!!':'아... 말해버렸다!';
       $('stageLabel').textContent=config.ending==='escape'?'도망갔다!':'드디어 말했다!';
+      if(config.ending==='escape') setCharacter('chiikawa_escape');
     }else render();
   });
   $('retry').addEventListener('click',()=>start(config));
