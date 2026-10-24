@@ -33,7 +33,7 @@
   }
   $('tap').addEventListener('click',()=>{
     if(finished)return;
-    value=Math.min(100,value+8);
+    value=Math.min(100,value+4);
     if(value>=100){
       finished=true;stop();render();$('tap').classList.add('hidden');
       $('endingBox').classList.remove('hidden');
