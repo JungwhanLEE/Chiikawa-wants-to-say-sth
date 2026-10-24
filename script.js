@@ -2,23 +2,25 @@
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const rates = {easy:6, normal:8, hard:10};
+  // Four expression and caption transitions share the same 25% thresholds.
+  // The original stage1 artwork is omitted from gameplay.
   const stages = [
-    {label:"발그레...",speech:"우..."},
-    {label:"꾸물꾸물...",speech:"우...우..."},
-    {label:"우물쭈물...",speech:"우...우아아..."},
-    {label:"울먹울먹...",speech:"아아...아아아..."}
+    {image:"chiikawa_stage2",label:"발그레...",speech:"우..."},
+    {image:"chiikawa_stage3",label:"꾸물꾸물...",speech:"우...우..."},
+    {image:"chiikawa_stage4",label:"우물쭈물...",speech:"우...우아아..."},
+    {image:"chiikawa_stage5",label:"울먹울먹...",speech:"아아...아아아..."}
   ];
   function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
   function decode(s){const raw=atob(s.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))))}
-  // Preload the original PNGs and switch between two image elements.
-  // The currently visible character stays on screen until its replacement is decoded.
+  // Preload all artwork that the game may show, retaining a decoded copy.
+  // stage6 is the message ending, escape is the runaway ending; stage1 is unused.
   const characterDir = "assets/characters/";
-  const artworkNames = Array.from({length: 6}, (_, i) => 'chiikawa_stage' + (i + 1))
-    .concat('chiikawa_escape');
+  const artworkNames = ['chiikawa_stage2','chiikawa_stage3','chiikawa_stage4',
+    'chiikawa_stage5','chiikawa_stage6','chiikawa_escape'];
   const artworkCache = new Map(artworkNames.map(name => {
     const image = new Image();
     image.src = characterDir + name + ".png";
-    const ready = typeof image.decode === 'function'
+    const ready = typeof image.decode === "function"
       ? image.decode().then(() => true, () => image.complete && image.naturalWidth > 0)
       : new Promise(resolve => {
           if (image.complete) return resolve(image.naturalWidth > 0);
@@ -27,49 +29,85 @@
         });
     return [name, {url: image.src, ready}];
   }));
-  let shownCharacter = "";
-  let requestedCharacter = "";
-  let imageSwapVersion = 0;
+
+  let requestedScene = "";
+  let displayedScene = "";
+  let swapVersion = 0;
   let frontImage = $('stageImage');
   let backImage = $('stageImageNext');
 
-  function setCharacter(name) {
-    if (requestedCharacter === name) return;
-    requestedCharacter = name;
-    const version = ++imageSwapVersion;
-    const asset = artworkCache.get(name);
-    if (!asset) return;
+  function resetScene() {
+    ++swapVersion; // Cancel any image decode callbacks from the preceding game.
+    requestedScene = "";
+    displayedScene = "";
+    frontImage.classList.add('hidden');
+    backImage.classList.add('hidden');
+    $('stageLabel').classList.add('hidden');
+    $('speech').textContent = '';
+    $('speech').closest('.speech-row').classList.add('hidden');
+  }
+
+  function commitScene(scene) {
+    $('stageLabel').textContent = scene.label;
+    $('stageLabel').classList.toggle('hidden', !!scene.hideLabel);
+    $('speech').textContent = scene.speech;
+    $('speech').closest('.speech-row').classList.remove('hidden');
+    if (scene.ending) $('endingBox').classList.remove('hidden');
+  }
+
+  function setScene(scene) {
+    if (requestedScene === scene.key) return;
+    requestedScene = scene.key;
+    const version = ++swapVersion;
+    const asset = artworkCache.get(scene.image);
+    if (!asset) {
+      if (scene.ending) commitScene(scene);
+      return;
+    }
+
+    if (displayedScene === scene.key) {
+      // The correct frame is already visible: cancel a pending outdated change.
+      commitScene(scene);
+      return;
+    }
+
     asset.ready.then(async loaded => {
-      if (!loaded || version !== imageSwapVersion || requestedCharacter !== name) return;
-      if (shownCharacter === name) return;
-      // Prepare an offscreen frame; never hide the displayed frame while loading.
+      if (version !== swapVersion || requestedScene !== scene.key) return;
+      if (!loaded) {
+        // Even if the ending image cannot load, never suppress the ending message.
+        if (scene.ending) commitScene(scene);
+        return;
+      }
+      // Decode on the hidden buffer while the previous frame remains displayed.
       backImage.src = asset.url;
       try {
         if (typeof backImage.decode === 'function') await backImage.decode();
       } catch {
-        if (!backImage.complete || backImage.naturalWidth === 0) return;
+        if (!backImage.complete || !backImage.naturalWidth) {
+          if (scene.ending && version === swapVersion) commitScene(scene);
+          return;
+        }
       }
-      // Ignore any older image load after the gauge has moved to a different phase.
-      if (version !== imageSwapVersion || requestedCharacter !== name) return;
-      if (!backImage.complete || backImage.naturalWidth === 0) return;
+      if (version !== swapVersion || requestedScene !== scene.key) return;
+      if (!backImage.complete || !backImage.naturalWidth) return;
+
+      // Swap artwork and both captions in one synchronous turn.
       backImage.classList.remove('hidden');
       frontImage.classList.add('hidden');
       [frontImage, backImage] = [backImage, frontImage];
-      shownCharacter = name;
+      displayedScene = scene.key;
+      commitScene(scene);
     });
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0, previewMode=false;
   function render(){
-    const stage=stages[Math.min(3,Math.floor(Math.min(value,99.99)/25))];
     $('percent').textContent=Math.round(value)+'%';$('bar').style.width=value+'%';
     $('meter').setAttribute('aria-valuenow',Math.round(value));
-    $('stageLabel').textContent=stage.label;
     if(!finished){
-      const imageStage=Math.min(6,Math.floor(Math.min(value,99.999)/ (100/6))+1);
-      setCharacter('chiikawa_stage'+imageStage);
+      const index=Math.min(3,Math.floor(Math.min(value,99.99)/25));
+      setScene({key:'stage-'+index,...stages[index]});
     }
-    if(!finished)$('speech').textContent=stage.speech;
   }
   function tick(t){
     if(!last)last=t;
@@ -78,7 +116,7 @@
   }
   function stop(){cancelAnimationFrame(frame);frame=0;last=0}
   function start(cfg, isPreview=false){
-    stop();config=cfg;value=0;finished=false;previewMode=isPreview;show('game');
+    stop();resetScene();config=cfg;value=0;finished=false;previewMode=isPreview;show('game');
     $('gameTitle').textContent=cfg.title;
     $('backToCreator').classList.toggle('hidden',!previewMode);
     $('tap').classList.remove('hidden');$('endingBox').classList.add('hidden');
@@ -93,7 +131,6 @@
     value=Math.min(100,value+5);
     if(value>=100){
       finished=true;stop();render();$('tap').classList.add('hidden');
-      $('endingBox').classList.remove('hidden');
       const isEscape = config.ending === 'escape';
       $('endingBox').classList.toggle('escape-ending', isEscape);
       $('endingTitle').textContent = isEscape ? '' : '드디어 말했다!';
@@ -102,15 +139,21 @@
         ? '치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.'
         : config.message;
       $('endingQuote').classList.toggle('hidden', !isEscape);
-      $('speech').textContent = isEscape ? '우와아아앙!!!' : '아... 말해버렸다!';
-      $('stageLabel').textContent = isEscape ? '' : '드디어 말했다!';
-      $('stageLabel').classList.toggle('hidden', isEscape);
-      if(isEscape) setCharacter('chiikawa_escape');
+      setScene({
+        key: 'ending-' + config.ending,
+        image: isEscape ? 'chiikawa_escape' : 'chiikawa_stage6',
+        label: isEscape ? '' : '드디어 말했다!',
+        hideLabel: isEscape,
+        speech: isEscape ? '우와아아앙!!!' : '아... 말해버렸다!',
+        ending: true
+      });
     }else render();
   });
   $('retry').addEventListener('click',()=>start(config, previewMode));
   $('backToCreator').addEventListener('click',()=>{
     stop();
+    ++swapVersion;
+    requestedScene = '';
     previewMode=false;
     $('backToCreator').classList.add('hidden');
     show('creator');
