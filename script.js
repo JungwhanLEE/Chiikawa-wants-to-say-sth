@@ -1,7 +1,7 @@
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  const rates = {easy:2, normal:5, hard:9};
+  const rates = {easy:10, normal:20, hard:30};
   const stages = [
     {label:"1단계 · 머뭇머뭇",speech:"우... 우...",icon:"♡"},
     {label:"2단계 · 얼굴 빨개짐",speech:"아... 잠깐만...",icon:"♥"},
