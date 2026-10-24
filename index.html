@@ -10,7 +10,7 @@
     <label class="choice"><input type="radio" name="ending" value="message"> 하고 싶은 말 하기</label>
   </fieldset>
   <label id="messageWrap" class="hidden">마지막에 보여줄 말<textarea id="messageInput" maxlength="300" placeholder="하고 싶은 말을 입력하세요."></textarea></label>
-  <label>난이도<select id="difficulty"><option value="easy">쉬움 (초당 10% 감소)</option><option value="normal" selected>보통 (초당 20% 감소)</option><option value="hard">어려움 (초당 30% 감소)</option></select></label>
+  <label>난이도<select id="difficulty"><option value="easy">쉬움 (초당 6% 감소)</option><option value="normal" selected>보통 (초당 8% 감소)</option><option value="hard">어려움 (초당 10% 감소)</option></select></label>
   <label class="choice"><input type="checkbox" id="panic"> 막판 발악 모드 (70%부터 감소 2배)</label>
   <button id="makeLink" class="primary">게임 링크 만들기</button>
   <div id="linkArea" class="hidden"><label>공유할 링크<input id="shareLink" readonly></label><button id="copyLink">링크 복사</button><button id="previewLink">플레이어 화면 미리보기</button></div>
@@ -18,10 +18,10 @@
 </section>
 <section id="game" class="panel hidden">
   <div class="eyebrow">A LITTLE COURAGE</div><h1 id="gameTitle">할 말이 있대...</h1>
-  <div class="character" aria-label="캐릭터 이미지 자리"><span id="stageEmoji">♡</span><p id="stageLabel">1단계 · 머뭇머뭇</p><small>캐릭터 이미지 삽입 예정</small></div>
-  <p id="speech" class="speech" aria-live="polite">우... 우...</p>
-  <div class="meterhead"><span>용기</span><strong id="percent">0%</strong></div>
-  <div class="meter" role="progressbar" aria-label="용기 게이지" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="meter"><div id="bar"></div></div>
+  <div class="character" aria-label="캐릭터 이미지 자리"><span id="stageEmoji">♡</span><p id="stageLabel">발그레...</p><small>캐릭터 이미지 삽입 예정</small></div>
+  <p id="speech" class="speech" aria-live="polite">우...</p>
+  <div class="meterhead"><span>응원도</span><strong id="percent">0%</strong></div>
+  <div class="meter" role="progressbar" aria-label="응원도 게이지" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="meter"><div id="bar"></div></div>
   <button id="tap" class="primary">♡ 꼬옥... 응원하기!</button>
   <div id="endingBox" class="ending hidden" aria-live="polite"><h2 id="endingTitle"></h2><p id="endingText"></p><button id="retry">다시 하기</button></div>
   <p class="muted small">버튼을 빠르게 눌러 100%를 채워주세요.</p>
