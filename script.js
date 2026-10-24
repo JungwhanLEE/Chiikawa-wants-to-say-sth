@@ -3,10 +3,10 @@
   const params = new URLSearchParams(location.search);
   const rates = {easy:6, normal:8, hard:10};
   const stages = [
-    {label:"발그레...",speech:"우...",icon:"♡"},
-    {label:"꾸물꾸물...",speech:"우...우...",icon:"♥"},
-    {label:"우물쭈물...",speech:"우...우아아...",icon:"!!"},
-    {label:"울먹울먹...",speech:"아아...아아아...",icon:"ㅠㅠ"}
+    {label:"발그레...",speech:"우..."},
+    {label:"꾸물꾸물...",speech:"우...우..."},
+    {label:"우물쭈물...",speech:"우...우아아..."},
+    {label:"울먹울먹...",speech:"아아...아아아..."}
   ];
   function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
   function decode(s){const raw=atob(s.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))))}
@@ -18,27 +18,21 @@
     currentCharacter = name;
     const picture = $('stageImage');
     picture.classList.add('hidden');
-    $('stageEmoji').classList.remove('hidden');
-    $('imageNotice').classList.remove('hidden');
     picture.onload = () => {
       picture.classList.remove('hidden');
-      $('stageEmoji').classList.add('hidden');
-      $('imageNotice').classList.add('hidden');
     };
     picture.onerror = () => {
       picture.classList.add('hidden');
-      $('stageEmoji').classList.remove('hidden');
-      $('imageNotice').classList.remove('hidden');
     };
     picture.src = characterDir + name + ".png";
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
-  let config, value=0, finished=false, last=0, frame=0;
+  let config, value=0, finished=false, last=0, frame=0, previewMode=false;
   function render(){
     const stage=stages[Math.min(3,Math.floor(Math.min(value,99.99)/25))];
     $('percent').textContent=Math.round(value)+'%';$('bar').style.width=value+'%';
     $('meter').setAttribute('aria-valuenow',Math.round(value));
-    $('stageLabel').textContent=stage.label;$('stageEmoji').textContent=stage.icon;
+    $('stageLabel').textContent=stage.label;
     if(!finished){
       const imageStage=Math.min(6,Math.floor(Math.min(value,99.999)/ (100/6))+1);
       setCharacter('chiikawa_stage'+imageStage);
@@ -51,9 +45,10 @@
     if(!finished){value=Math.max(0,value-rates[config.difficulty]*(config.panic&&value>=70?2:1)*dt);render();frame=requestAnimationFrame(tick)}
   }
   function stop(){cancelAnimationFrame(frame);frame=0;last=0}
-  function start(cfg){
-    stop();config=cfg;value=0;finished=false;show('game');
+  function start(cfg, isPreview=false){
+    stop();config=cfg;value=0;finished=false;previewMode=isPreview;show('game');
     $('gameTitle').textContent=cfg.title;
+    $('backToCreator').classList.toggle('hidden',!previewMode);
     $('tap').classList.remove('hidden');$('endingBox').classList.add('hidden');
     render();frame=requestAnimationFrame(tick);
   }
@@ -70,7 +65,13 @@
       if(config.ending==='escape') setCharacter('chiikawa_escape');
     }else render();
   });
-  $('retry').addEventListener('click',()=>start(config));
+  $('retry').addEventListener('click',()=>start(config, previewMode));
+  $('backToCreator').addEventListener('click',()=>{
+    stop();
+    previewMode=false;
+    $('backToCreator').classList.add('hidden');
+    show('creator');
+  });
   document.querySelectorAll('input[name=ending]').forEach(el=>el.addEventListener('change',()=>{
     $('messageWrap').classList.toggle('hidden',document.querySelector('input[name=ending]:checked').value!=='message');
   }));
@@ -88,7 +89,7 @@
     catch{$('shareLink').select();$('copyLink').textContent='주소를 선택했어요. 직접 복사해 주세요.'}
   });
   $('previewLink').addEventListener('click',()=>{
-    try{const u=new URL($('shareLink').value);start(decode(u.searchParams.get('game')))}catch{alert('링크를 다시 만들어 주세요.')}
+    try{const u=new URL($('shareLink').value);start(decode(u.searchParams.get('game')), true)}catch{alert('링크를 다시 만들어 주세요.')}
   });
   if(params.has('game')){
     try{
