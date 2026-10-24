@@ -176,3 +176,65 @@ button { font-size: 17px; }
     max-width: 90%;
   }
 }
+
+/* Five restrained character-only motions. The image swaps and captions remain synchronized. */
+.character-image-wrap {
+  transform-origin: center 55%;
+  will-change: transform;
+}
+.character-image-wrap.motion-stage-1 {
+  /* Shy side-to-side drift: smaller and slower than stage 2. */
+  animation: chiikawa-drift-slow 2.8s ease-in-out infinite;
+}
+.character-image-wrap.motion-stage-2 {
+  animation: chiikawa-drift-shy 1.5s ease-in-out infinite;
+}
+.character-image-wrap.motion-stage-3 {
+  animation: chiikawa-wriggle 1.2s ease-in-out infinite;
+}
+.character-image-wrap.motion-stage-4 {
+  /* Shake for about 0.6 seconds, then rest for about 0.35 seconds. */
+  animation: chiikawa-tremble 0.95s linear infinite;
+}
+.character-image-wrap.motion-stage-5 {
+  /* Fast 1–2px trembling punctuated by a 5px upward startle. */
+  animation: chiikawa-near-tears 1.4s linear infinite;
+}
+@keyframes chiikawa-drift-slow {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+@keyframes chiikawa-drift-shy {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+@keyframes chiikawa-wriggle {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-2deg) translateY(-1px); }
+  75% { transform: rotate(2deg) translateY(1px); }
+}
+@keyframes chiikawa-tremble {
+  0%, 64%, 100% { transform: translateX(0); }
+  8%, 24%, 40%, 56% { transform: translateX(-1.5px); }
+  16%, 32%, 48% { transform: translateX(1.5px); }
+}
+@keyframes chiikawa-near-tears {
+  0%, 100% { transform: translate(0, 0); }
+  5%, 15%, 25%, 35%, 45%, 55%, 73%, 83%, 93% { transform: translate(-1.5px, 0); }
+  10%, 20%, 30%, 40%, 50%, 60%, 78%, 88%, 96% { transform: translate(2px, 0); }
+  64% { transform: translate(0, -5px); }
+  68% { transform: translate(1px, 0); }
+}
+/* Respect device accessibility settings without changing stage logic. */
+@media (prefers-reduced-motion: reduce) {
+  .character-image-wrap.motion-stage-1,
+  .character-image-wrap.motion-stage-2,
+  .character-image-wrap.motion-stage-3,
+  .character-image-wrap.motion-stage-4,
+  .character-image-wrap.motion-stage-5 {
+    animation: none;
+    will-change: auto;
+  }
+}
