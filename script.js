@@ -50,6 +50,10 @@
     $('gameTitle').textContent=cfg.title;
     $('backToCreator').classList.toggle('hidden',!previewMode);
     $('tap').classList.remove('hidden');$('endingBox').classList.add('hidden');
+    $('endingBox').classList.remove('escape-ending');
+    $('endingTitle').classList.remove('hidden');
+    $('endingQuote').classList.add('hidden');
+    $('stageLabel').classList.remove('hidden');
     render();frame=requestAnimationFrame(tick);
   }
   $('tap').addEventListener('click',()=>{
@@ -58,11 +62,18 @@
     if(value>=100){
       finished=true;stop();render();$('tap').classList.add('hidden');
       $('endingBox').classList.remove('hidden');
-      $('endingTitle').textContent=config.ending==='escape'?'도망갔다!':'드디어 말했다!';
-      $('endingText').textContent=config.ending==='escape'?'치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.\n\n"왜 애를 울려!"':config.message;
-      $('speech').textContent=config.ending==='escape'?'우와아아앙!!!':'아... 말해버렸다!';
-      $('stageLabel').textContent=config.ending==='escape'?'도망갔다!':'드디어 말했다!';
-      if(config.ending==='escape') setCharacter('chiikawa_escape');
+      const isEscape = config.ending === 'escape';
+      $('endingBox').classList.toggle('escape-ending', isEscape);
+      $('endingTitle').textContent = isEscape ? '' : '드디어 말했다!';
+      $('endingTitle').classList.toggle('hidden', isEscape);
+      $('endingText').textContent = isEscape
+        ? '치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.'
+        : config.message;
+      $('endingQuote').classList.toggle('hidden', !isEscape);
+      $('speech').textContent = isEscape ? '우와아아앙!!!' : '아... 말해버렸다!';
+      $('stageLabel').textContent = isEscape ? '' : '드디어 말했다!';
+      $('stageLabel').classList.toggle('hidden', isEscape);
+      if(isEscape) setCharacter('chiikawa_escape');
     }else render();
   });
   $('retry').addEventListener('click',()=>start(config, previewMode));
