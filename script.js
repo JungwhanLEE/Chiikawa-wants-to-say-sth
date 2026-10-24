@@ -4,8 +4,8 @@
   const rates = {easy:6, normal:8, hard:10};
   const stages = [
     {label:"발그레...",speech:"우...",icon:"♡"},
-    {label:"꾸물꾸물...",speech:"우...와...",icon:"♥"},
-    {label:"우물쭈물...",speech:"우우...아아아...",icon:"!!"},
+    {label:"꾸물꾸물...",speech:"우...우...",icon:"♥"},
+    {label:"우물쭈물...",speech:"우...우아아...",icon:"!!"},
     {label:"울먹울먹...",speech:"아아...아아아...",icon:"ㅠㅠ"}
   ];
   function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
