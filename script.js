@@ -11,6 +11,7 @@
     {image:"chiikawa_stage5",label:"울먹울먹...",speech:"아아...아아아..."},
     {image:"chiikawa_stage6",label:"그렁그렁...",speech:"아아아아아..."}
   ];
+  const motionStageClasses = stages.map((_, i) => 'motion-stage-' + (i + 1));
   function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
   function decode(s){const raw=atob(s.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))))}
   // Preload all artwork that the game may show, retaining a decoded copy.
@@ -49,6 +50,7 @@
     displayedScene = "";
     visibleStageIndex = 0;
     holdUntil = 0;
+    $('characterMotion').classList.remove(...motionStageClasses);
     frontImage.classList.add('hidden');
     backImage.classList.add('hidden');
     $('stageLabel').classList.add('hidden');
@@ -57,6 +59,15 @@
   }
 
   function commitScene(scene) {
+    // Animate only the artwork container, not its caption or speech bubble.
+    // Apply the motion on the same frame as the decoded image/caption swap.
+    const motionLayer = $('characterMotion');
+    const targetMotion = Number.isInteger(scene.stageIndex)
+      ? motionStageClasses[scene.stageIndex] : null;
+    if (!targetMotion || !motionLayer.classList.contains(targetMotion)) {
+      motionLayer.classList.remove(...motionStageClasses);
+      if (targetMotion) motionLayer.classList.add(targetMotion);
+    }
     $('stageLabel').textContent = scene.label;
     $('stageLabel').classList.toggle('hidden', !!scene.hideLabel);
     $('speech').textContent = scene.speech;
