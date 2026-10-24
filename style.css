@@ -136,3 +136,19 @@ button { font-size: 17px; }
   }
   #stageLabel.stage-caption { font-size: 22px; }
 }
+
+/* Escape ending: quiet explanation, emphasized punch line. */
+.ending.escape-ending #endingText {
+  font-size: 17px;
+  line-height: 1.55;
+  color: #816a74;
+  margin: 6px 0 22px;
+}
+.ending.escape-ending #endingQuote {
+  font-family: "Jua", system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.3;
+  color: #c53b72;
+  margin: 0 0 20px;
+}
