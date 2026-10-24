@@ -152,3 +152,27 @@ button { font-size: 17px; }
   color: #c53b72;
   margin: 0 0 20px;
 }
+
+/* Double-buffered character frames: centered, overlapping only each other. */
+.character-image-wrap { position: relative; }
+.character #stageImage,
+.character #stageImageNext {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  width: auto;
+  height: 235px;
+  max-height: 100%;
+  max-width: 88%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+}
+@media (max-width: 400px) {
+  .character #stageImage,
+  .character #stageImageNext {
+    height: 205px;
+    max-height: 100%;
+    max-width: 90%;
+  }
+}
