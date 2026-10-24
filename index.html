@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261025-fonts-2"></head>
+<link rel="stylesheet" href="style.css?v=20261025-previewback-1"></head>
 <body><main class="app">
 <section id="creator" class="panel hidden">
   <div class="eyebrow">GAME MAKER</div><h1>게임 만들기</h1><p class="muted">설정하고 링크를 친구에게 보내세요.</p>
@@ -21,12 +21,11 @@
   <p id="createError" class="error" role="alert"></p>
 </section>
 <section id="game" class="panel hidden">
+  <button id="backToCreator" class="preview-back hidden" type="button">← 설정 화면으로 돌아가기</button>
   <div class="eyebrow">A LITTLE COURAGE</div><h1 id="gameTitle">할 말이 있대...</h1>
   <div class="character" aria-label="치이카와 캐릭터">
     <img id="stageImage" class="hidden" alt="치이카와의 표정" decoding="async">
-    <span id="stageEmoji" aria-hidden="true">♡</span>
     <p id="stageLabel">발그레...</p>
-    <small id="imageNotice">원본 PNG 파일 연결 대기 중</small>
   </div>
   <p id="speech" class="speech" aria-live="polite">우...</p>
   <div class="meterhead"><span>응원도</span><strong id="percent">0%</strong></div>
@@ -34,4 +33,4 @@
   <button id="tap" class="primary">♡ 꼬옥... 응원하기!</button>
   <div id="endingBox" class="ending hidden" aria-live="polite"><h2 id="endingTitle"></h2><p id="endingText"></p><button id="retry">다시 하기</button></div>
   <p class="muted small">버튼을 빠르게 눌러 100%를 채워주세요.</p>
-</section></main><script src="script.js?v=20261025-character-1"></script></body></html>
+</section></main><script src="script.js?v=20261025-previewback-1"></script></body></html>
