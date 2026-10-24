@@ -30,6 +30,11 @@
     return [name, {url: image.src, ready}];
   }));
 
+  // Prevent expressions from oscillating as the gauge hovers near 25/50/75%.
+  const MIN_STAGE_HOLD_MS = 850;  // Keep each changed expression for at least 0.85s.
+  const DOWNWARD_BUFFER = 4;     // Require 4 percentage points below a boundary to go back.
+  let visibleStageIndex = 0;
+  let holdUntil = 0;
   let requestedScene = "";
   let displayedScene = "";
   let swapVersion = 0;
@@ -40,6 +45,8 @@
     ++swapVersion; // Cancel any image decode callbacks from the preceding game.
     requestedScene = "";
     displayedScene = "";
+    visibleStageIndex = 0;
+    holdUntil = 0;
     frontImage.classList.add('hidden');
     backImage.classList.add('hidden');
     $('stageLabel').classList.add('hidden');
@@ -92,21 +99,37 @@
       if (!backImage.complete || !backImage.naturalWidth) return;
 
       // Swap artwork and both captions in one synchronous turn.
+      const hadVisibleScene = !!displayedScene;
       backImage.classList.remove('hidden');
       frontImage.classList.add('hidden');
       [frontImage, backImage] = [backImage, frontImage];
       displayedScene = scene.key;
+      if (Number.isInteger(scene.stageIndex)) {
+        visibleStageIndex = scene.stageIndex;
+        // The first frame is the starting state, not a transition to delay.
+        holdUntil = hadVisibleScene ? performance.now() + MIN_STAGE_HOLD_MS : 0;
+      }
       commitScene(scene);
     });
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0, previewMode=false;
+
+  function chooseStageIndex(now) {
+    // While a frame is locked, the gauge still changes normally.
+    if (now < holdUntil) return visibleStageIndex;
+    let index = visibleStageIndex;
+    while (index < stages.length - 1 && value >= (index + 1) * 25) index++;
+    while (index > 0 && value < index * 25 - DOWNWARD_BUFFER) index--;
+    return index;
+  }
+
   function render(){
     $('percent').textContent=Math.round(value)+'%';$('bar').style.width=value+'%';
     $('meter').setAttribute('aria-valuenow',Math.round(value));
     if(!finished){
-      const index=Math.min(3,Math.floor(Math.min(value,99.99)/25));
-      setScene({key:'stage-'+index,...stages[index]});
+      const index=chooseStageIndex(performance.now());
+      setScene({key:'stage-'+index,stageIndex:index,...stages[index]});
     }
   }
   function tick(t){
