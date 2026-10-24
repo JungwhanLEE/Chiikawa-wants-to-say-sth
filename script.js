@@ -10,21 +10,53 @@
   ];
   function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
   function decode(s){const raw=atob(s.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))))}
-  // Artwork is loaded from replaceable PNG files; four text phases remain separate.
+  // Preload the original PNGs and switch between two image elements.
+  // The currently visible character stays on screen until its replacement is decoded.
   const characterDir = "assets/characters/";
-  let currentCharacter = "";
+  const artworkNames = Array.from({length: 6}, (_, i) => 'chiikawa_stage' + (i + 1))
+    .concat('chiikawa_escape');
+  const artworkCache = new Map(artworkNames.map(name => {
+    const image = new Image();
+    image.src = characterDir + name + ".png";
+    const ready = typeof image.decode === 'function'
+      ? image.decode().then(() => true, () => image.complete && image.naturalWidth > 0)
+      : new Promise(resolve => {
+          if (image.complete) return resolve(image.naturalWidth > 0);
+          image.onload = () => resolve(true);
+          image.onerror = () => resolve(false);
+        });
+    return [name, {url: image.src, ready}];
+  }));
+  let shownCharacter = "";
+  let requestedCharacter = "";
+  let imageSwapVersion = 0;
+  let frontImage = $('stageImage');
+  let backImage = $('stageImageNext');
+
   function setCharacter(name) {
-    if (currentCharacter === name) return;
-    currentCharacter = name;
-    const picture = $('stageImage');
-    picture.classList.add('hidden');
-    picture.onload = () => {
-      picture.classList.remove('hidden');
-    };
-    picture.onerror = () => {
-      picture.classList.add('hidden');
-    };
-    picture.src = characterDir + name + ".png";
+    if (requestedCharacter === name) return;
+    requestedCharacter = name;
+    const version = ++imageSwapVersion;
+    const asset = artworkCache.get(name);
+    if (!asset) return;
+    asset.ready.then(async loaded => {
+      if (!loaded || version !== imageSwapVersion || requestedCharacter !== name) return;
+      if (shownCharacter === name) return;
+      // Prepare an offscreen frame; never hide the displayed frame while loading.
+      backImage.src = asset.url;
+      try {
+        if (typeof backImage.decode === 'function') await backImage.decode();
+      } catch {
+        if (!backImage.complete || backImage.naturalWidth === 0) return;
+      }
+      // Ignore any older image load after the gauge has moved to a different phase.
+      if (version !== imageSwapVersion || requestedCharacter !== name) return;
+      if (!backImage.complete || backImage.naturalWidth === 0) return;
+      backImage.classList.remove('hidden');
+      frontImage.classList.add('hidden');
+      [frontImage, backImage] = [backImage, frontImage];
+      shownCharacter = name;
+    });
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0, previewMode=false;
