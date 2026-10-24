@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261025-speechbubble-1"></head>
+<link rel="stylesheet" href="style.css?v=20261025-minimal-bubble-2"></head>
 <body><main class="app">
 <section id="creator" class="panel hidden">
   <div class="eyebrow">GAME MAKER</div><h1>게임 만들기</h1><p class="muted">설정하고 링크를 친구에게 보내세요.</p>
@@ -24,10 +24,14 @@
   <button id="backToCreator" class="preview-back hidden" type="button">← 설정 화면으로 돌아가기</button>
   <div class="eyebrow">A LITTLE COURAGE</div><h1 id="gameTitle">할 말이 있대...</h1>
   <div class="character" aria-label="치이카와 캐릭터">
-    <div class="speech-bubble" role="status">
-      <span id="speech" class="speech" aria-live="polite">우...</span>
+    <div class="speech-row">
+      <div class="speech-bubble" role="status">
+        <span id="speech" class="speech" aria-live="polite">우...</span>
+      </div>
     </div>
-    <img id="stageImage" class="hidden" alt="치이카와의 표정" decoding="async">
+    <div class="character-image-wrap">
+      <img id="stageImage" class="hidden" alt="치이카와의 표정" decoding="async">
+    </div>
   </div>
   <p id="stageLabel" class="stage-caption">발그레...</p>
   <div class="meterhead"><span>응원도</span><strong id="percent">0%</strong></div>
