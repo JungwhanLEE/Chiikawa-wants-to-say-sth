@@ -190,15 +190,16 @@ button { font-size: 17px; }
   animation: chiikawa-drift-shy 1.5s ease-in-out infinite;
 }
 .character-image-wrap.motion-stage-3 {
-  animation: chiikawa-wriggle 1.2s ease-in-out infinite;
+  /* Alternate a single smooth swing to avoid speed resets at intermediate keyframes. */
+  animation: chiikawa-wriggle 0.65s ease-in-out infinite alternate;
 }
 .character-image-wrap.motion-stage-4 {
   /* Shake for about 0.6 seconds, then rest for about 0.35 seconds. */
   animation: chiikawa-tremble 0.95s linear infinite;
 }
 .character-image-wrap.motion-stage-5 {
-  /* Fast 1–2px trembling punctuated by a 5px upward startle. */
-  animation: chiikawa-near-tears 1.4s linear infinite;
+  /* Short fast tremble (~0.4s), one 5px upward jolt, then a quiet pause. */
+  animation: chiikawa-near-tears 1.3s linear infinite;
 }
 @keyframes chiikawa-drift-slow {
   0%, 100% { transform: translateX(0); }
@@ -211,9 +212,8 @@ button { font-size: 17px; }
   75% { transform: translateX(3px); }
 }
 @keyframes chiikawa-wriggle {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  25% { transform: rotate(-2deg) translateY(-1px); }
-  75% { transform: rotate(2deg) translateY(1px); }
+  from { transform: rotate(-2deg) translateY(-1px); }
+  to { transform: rotate(2deg) translateY(1px); }
 }
 @keyframes chiikawa-tremble {
   0%, 64%, 100% { transform: translateX(0); }
@@ -221,11 +221,10 @@ button { font-size: 17px; }
   16%, 32%, 48% { transform: translateX(1.5px); }
 }
 @keyframes chiikawa-near-tears {
-  0%, 100% { transform: translate(0, 0); }
-  5%, 15%, 25%, 35%, 45%, 55%, 73%, 83%, 93% { transform: translate(-1.5px, 0); }
-  10%, 20%, 30%, 40%, 50%, 60%, 78%, 88%, 96% { transform: translate(2px, 0); }
-  64% { transform: translate(0, -5px); }
-  68% { transform: translate(1px, 0); }
+  0%, 30%, 42%, 100% { transform: translate(0, 0); }
+  4%, 12%, 20%, 28% { transform: translate(-1.5px, 0); }
+  8%, 16%, 24% { transform: translate(2px, 0); }
+  36% { transform: translate(0, -5px); }
 }
 /* Respect device accessibility settings without changing stage logic. */
 @media (prefers-reduced-motion: reduce) {
