@@ -38,7 +38,7 @@
       finished=true;stop();render();$('tap').classList.add('hidden');
       $('endingBox').classList.remove('hidden');
       $('endingTitle').textContent=config.ending==='escape'?'도망갔다!':'드디어 말했다!';
-      $('endingText').textContent=config.ending==='escape'?'치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.\n"왜 애를 울려!"':config.message;
+      $('endingText').textContent=config.ending==='escape'?'치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.\n\n"왜 애를 울려!"':config.message;
       $('speech').textContent=config.ending==='escape'?'우와아아앙!!!':'아... 말해버렸다!';
       $('stageLabel').textContent=config.ending==='escape'?'도망갔다!':'드디어 말했다!';
     }else render();
