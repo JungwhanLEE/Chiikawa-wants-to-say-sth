@@ -1,12 +1,12 @@
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  const rates = {easy:10, normal:20, hard:30};
+  const rates = {easy:6, normal:8, hard:10};
   const stages = [
-    {label:"1단계 · 머뭇머뭇",speech:"우... 우...",icon:"♡"},
-    {label:"2단계 · 얼굴 빨개짐",speech:"아... 잠깐만...",icon:"♥"},
-    {label:"3단계 · 심하게 부끄러움",speech:"아아... 으으...",icon:"!!"},
-    {label:"4단계 · 눈물 맺힘",speech:"으아... 울 것 같아...",icon:"ㅠㅠ"}
+    {label:"발그레...",speech:"우...",icon:"♡"},
+    {label:"꾸물꾸물...",speech:"우...와...",icon:"♥"},
+    {label:"우물쭈물...",speech:"우우...아아아...",icon:"!!"},
+    {label:"울먹울먹...",speech:"아아...아아아...",icon:"ㅠㅠ"}
   ];
   function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
   function decode(s){const raw=atob(s.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))))}
@@ -33,13 +33,14 @@
   }
   $('tap').addEventListener('click',()=>{
     if(finished)return;
-    value=Math.min(100,value+4);
+    value=Math.min(100,value+5);
     if(value>=100){
       finished=true;stop();render();$('tap').classList.add('hidden');
       $('endingBox').classList.remove('hidden');
-      $('endingTitle').textContent=config.ending==='escape'?'으아아앙! 도망갔다!':'드디어 말했다!';
-      $('endingText').textContent=config.ending==='escape'?'치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.':config.message;
+      $('endingTitle').textContent=config.ending==='escape'?'도망갔다!':'드디어 말했다!';
+      $('endingText').textContent=config.ending==='escape'?'치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.\n"왜 애를 울려!"':config.message;
       $('speech').textContent=config.ending==='escape'?'우와아아앙!!!':'아... 말해버렸다!';
+      $('stageLabel').textContent=config.ending==='escape'?'도망갔다!':'드디어 말했다!';
     }else render();
   });
   $('retry').addEventListener('click',()=>start(config));
