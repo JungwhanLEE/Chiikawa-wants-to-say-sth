@@ -22,7 +22,7 @@
   function tick(t){
     if(!last)last=t;
     const dt=Math.min((t-last)/1000,.25);last=t;
-    if(!finished){value=Math.max(0,value-rates[config.difficulty]*(config.panic&&value>=80?2:1)*dt);render();frame=requestAnimationFrame(tick)}
+    if(!finished){value=Math.max(0,value-rates[config.difficulty]*(config.panic&&value>=70?2:1)*dt);render();frame=requestAnimationFrame(tick)}
   }
   function stop(){cancelAnimationFrame(frame);frame=0;last=0}
   function start(cfg){
