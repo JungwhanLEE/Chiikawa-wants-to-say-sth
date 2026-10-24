@@ -40,80 +40,99 @@ button { font-size: 17px; }
   border-color: #efd3dd;
 }
 
-/* Hand-drawn comic dialogue bubble next to the original PNG artwork. */
+
+/* Minimal speech card above, never overlapping the centered original illustration. */
 .character {
-  position: relative;
-  height: 325px;
-  padding: 18px 10px 14px;
+  height: 340px;
+  border-radius: 22px;
+  background: #fff4f7;
+  margin: 20px 0 10px;
+  padding: 18px 18px 14px;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  overflow: visible;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  overflow: hidden;
 }
-.character #stageImage {
-  display: block;
-  width: auto;
-  height: 243px;
-  max-width: 82%;
-  object-fit: contain;
-  transform: translateX(-19px);
+.speech-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 .speech-bubble {
-  position: absolute;
-  top: 16px;
-  right: 12px;
-  z-index: 1;
-  display: flex;
+  position: static;
+  z-index: auto;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 65px;
-  width: max-content;
-  max-width: 56%;
-  padding: 9px 16px;
-  background: #fff;
-  border: 2px solid #634751;
-  border-radius: 48% 52% 50% 50% / 54% 56% 44% 46%;
-  box-shadow: 2px 3px 0 #f4dbe5;
-  transform: rotate(4deg);
+  min-height: 56px;
+  min-width: 150px;
+  max-width: 58%;
+  padding: 10px 18px;
+  background: #ffffff;
+  border: 2px solid #6a4d57;
+  border-radius: 18px;
+  box-shadow: none;
+  transform: none;
 }
-.speech-bubble::after {
-  content: "";
-  position: absolute;
-  left: 26%;
-  bottom: -11px;
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border-left: 2px solid #634751;
-  border-bottom: 2px solid #634751;
-  border-bottom-left-radius: 3px;
-  transform: rotate(-34deg) skewY(-7deg);
-}
+.speech-bubble::after { content: none; }
 .speech-bubble .speech {
-  display: block;
   margin: 0;
   min-height: 0;
   font-family: "Gaegu", "Apple SD Gothic Neo", sans-serif;
-  font-size: 25px;
+  font-size: 24px;
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.2;
   text-align: center;
   white-space: normal;
   overflow-wrap: anywhere;
 }
+.character-image-wrap {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.character #stageImage {
+  display: block;
+  width: auto;
+  height: 235px;
+  max-height: 100%;
+  max-width: 88%;
+  object-fit: contain;
+  transform: none;
+}
 #stageLabel.stage-caption {
-  margin: 9px 0 3px;
-  min-height: 36px;
+  margin: 8px 0 4px;
+  min-height: 34px;
   font-family: "Jua", system-ui, -apple-system, sans-serif;
   font-size: 24px;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.4;
   text-align: center;
 }
 @media (max-width: 400px) {
-  .character { height: 298px; padding: 18px 6px 12px; }
-  .character #stageImage { height: 214px; max-width: 82%; transform: translateX(-12px); }
-  .speech-bubble { top: 12px; right: 7px; min-height: 58px; padding: 8px 11px; max-width: 60%; }
-  .speech-bubble .speech { font-size: 22px; }
-  #stageLabel.stage-caption { font-size: 23px; }
+  .character {
+    height: 305px;
+    padding: 14px 12px 12px;
+  }
+  .speech-row { margin-bottom: 6px; }
+  .speech-bubble {
+    min-height: 48px;
+    min-width: 140px;
+    max-width: 64%;
+    padding: 8px 14px;
+    border-radius: 16px;
+  }
+  .speech-bubble .speech { font-size: 21px; }
+  .character #stageImage {
+    height: 205px;
+    max-height: 100%;
+    max-width: 90%;
+  }
+  #stageLabel.stage-caption { font-size: 22px; }
 }
