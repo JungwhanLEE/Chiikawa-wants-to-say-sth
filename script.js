@@ -8,7 +8,7 @@
     {label:"3단계 · 심하게 부끄러움",speech:"아아... 으으...",icon:"!!"},
     {label:"4단계 · 눈물 맺힘",speech:"으아... 울 것 같아...",icon:"ㅠㅠ"}
   ];
-  function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'')}
+  function encode(obj){return btoa(Array.from(new TextEncoder().encode(JSON.stringify(obj)), b=>String.fromCharCode(b)).join('')).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'')}
   function decode(s){const raw=atob(s.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))))}
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0;
@@ -65,7 +65,7 @@
   if(params.has('game')){
     try{
       const cfg=decode(params.get('game'));
-      if(!cfg||!['escape','message'].includes(cfg.ending)||!Object.hasOwn(rates,cfg.difficulty)||typeof cfg.title!=='string'||typeof cfg.message!=='string'||typeof cfg.panic!=='boolean')throw Error('invalid');
+      if(!cfg||!['escape','message'].includes(cfg.ending)||!Object.prototype.hasOwnProperty.call(rates,cfg.difficulty)||typeof cfg.title!=='string'||typeof cfg.message!=='string'||typeof cfg.panic!=='boolean')throw Error('invalid');
       start(cfg);
     }catch{show('creator');$('createError').textContent='유효하지 않은 게임 링크입니다. 새로 만들어 주세요.'}
   }else show('creator');
