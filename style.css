@@ -6,9 +6,15 @@ h1, h2, button, .meterhead strong {
   font-weight: 400;
 }
 button { font-size: 17px; }
-#stageLabel, .speech, .ending p {
+/* Only Chiikawa's speech bubble uses handwritten Gaegu. */
+.speech {
   font-family: "Gaegu", "Apple SD Gothic Neo", sans-serif;
   font-weight: 700;
+}
+/* Stage captions and ending description use rounded Jua. */
+#stageLabel, .ending p {
+  font-family: "Jua", system-ui, -apple-system, sans-serif;
+  font-weight: 400;
 }
 #stageLabel { font-size: 23px; }
 .speech { font-size: 27px; }
