@@ -1,7 +1,7 @@
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  const rates = {easy:6, normal:8, hard:10};
+  const rates = {easy:5, normal:8, hard:11};
   // Five synchronized art/caption phases at 20% intervals.
   // The original stage1 artwork is omitted from gameplay.
   const stages = [
