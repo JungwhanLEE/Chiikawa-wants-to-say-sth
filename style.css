@@ -604,12 +604,5 @@ button { font-size: 17px; }
   margin: 8px 0 12px;
 }
 
-/* Small inline confirmation after generating or updating a shareable game. */
-#gameUpdateNotice.game-update-notice {
-  margin: 12px 0 0;
-  font-family: "Jua", "Apple SD Gothic Neo", sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  text-align: center;
-  color: #a2466d;
-}
+/* Creation feedback reuses the validation message location and system font. */
+#createError.is-success { color: #9d4f70; }
