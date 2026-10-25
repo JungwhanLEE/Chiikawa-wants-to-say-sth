@@ -299,10 +299,10 @@ button { font-size: 17px; }
 .usagi-enter-art {transform:translateX(160%);}
 .usagi-final-art {transform:translateX(-50%);}
 #game.is-usagi-entry .usagi-enter-art {
-  animation:usagi-charge .64s cubic-bezier(.22,.9,.32,1.22) both;
+  animation:usagi-charge .46s cubic-bezier(.2,.95,.28,1.18) both;
 }
 #game.is-usagi-entry #characterMotion {
-  animation:chiikawa-shoved .78s cubic-bezier(.5,0,.8,1) both;
+  animation:chiikawa-shoved .52s cubic-bezier(.22,.8,.32,1.08) both;
 }
 #game.is-usagi-finale .usagi-final-art {
   transform:translateX(-50%);
@@ -353,8 +353,9 @@ button { font-size: 17px; }
   100%{opacity:1;transform:translateY(0) scale(1) rotate(-12deg)}
 }
 @keyframes usagi-charge {
-  0%{transform:translateX(160%) rotate(9deg)}
-  70%{transform:translateX(-60%) rotate(-7deg)}
+  0%{transform:translateX(170%) rotate(10deg)}
+  55%{transform:translateX(-39%) rotate(-6deg)}
+  75%{transform:translateX(-56%) rotate(3deg)}
   100%{transform:translateX(-50%) rotate(0)}
 }
 @keyframes usagi-final-arrive {
@@ -362,9 +363,11 @@ button { font-size: 17px; }
   to{opacity:1;transform:translateX(-50%) scale(1)}
 }
 @keyframes chiikawa-shoved {
-  0%,20%{transform:translateX(0) rotate(0);opacity:1}
-  58%{transform:translateX(-22px) rotate(-9deg);opacity:1}
-  100%{transform:translateX(-220px) rotate(-30deg);opacity:0}
+  0%,22%{transform:translate(0,0) rotate(0deg) scale(1);opacity:1}
+  29%{transform:translate(-8px,1px) rotate(-3deg) scale(.96);opacity:1}
+  44%{transform:translate(-70px,-9px) rotate(-13deg) scale(.98);opacity:1}
+  73%{transform:translate(-245px,-24px) rotate(-28deg) scale(.94);opacity:.8}
+  100%{transform:translate(-340px,-19px) rotate(-37deg) scale(.9);opacity:0}
 }
 @keyframes usagi-message-reveal {
   0%{opacity:0;transform:translateY(22px) scale(.65) rotate(-4deg);filter:blur(5px)}
