@@ -440,3 +440,26 @@ button { font-size: 17px; }
 #game.is-escape-finale > .muted.small {
   display: none !important;
 }
+
+/* Character-specific dialogue: shy Chiikawa vs. energetic Usagi. */
+.speech-bubble .speech {
+  font-family: "Gamja Flower", "Apple SD Gothic Neo", cursive, sans-serif;
+  font-weight: 400;
+}
+#game.is-usagi-entry .speech-bubble .speech,
+#game.is-usagi-finale .speech-bubble .speech {
+  font-family: "Dongle", "Apple SD Gothic Neo", sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1;
+}
+#game.is-usagi-finale .speech-bubble .speech {
+  font-size: clamp(31px, 7vw, 39px);
+  line-height: 1.05;
+}
+@media (max-width:400px) {
+  #game.is-usagi-entry .speech-bubble .speech { font-size: 32px; }
+  #game.is-usagi-finale .speech-bubble .speech {
+    font-size: clamp(28px, 7.5vw, 35px);
+  }
+}
