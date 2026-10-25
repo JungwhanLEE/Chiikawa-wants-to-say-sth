@@ -130,6 +130,15 @@
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0, previewMode=false;
+  // Relay mode: round 0 escapes, round 1 has Usagi steal the message.
+  let relayRound = 0;
+  function effectiveEnding() {
+    return config.ending === 'relay' ? (relayRound === 0 ? 'escape' : 'message') : config.ending;
+  }
+  function updateRetryLabel() {
+    $('retry').textContent = config.ending === 'relay' && relayRound === 0
+      ? '이번에는 다를지도...?' : '다시 하기';
+  }
   const ENDING_BUILDUP_MS = 1300;
   let endingTimer = null;
   let tapBounce = null;
@@ -170,12 +179,13 @@
     $('userMessage').textContent = '우라~!';
     $('userMessage').classList.remove('hidden');
     $('endingText').textContent = '치이카와는 결국 쫓겨나버렸습니다.';
+    updateRetryLabel();
   }
 
   function revealEnding() {
     // Display the ending independent of image loading/decoding.
     cancelEndingBuildup();
-    const isEscape = config.ending === 'escape';
+    const isEscape = effectiveEnding() === 'escape';
     $('endingBox').classList.toggle('escape-ending', isEscape);
     $('endingTitle').textContent = isEscape ? '' : '드디어 말했다!';
     $('endingTitle').classList.toggle('hidden', isEscape);
@@ -184,7 +194,7 @@
       : config.message;
     $('endingQuote').classList.toggle('hidden', !isEscape);
     const endingScene = {
-      key: 'ending-' + config.ending,
+      key: 'ending-' + effectiveEnding(),
       image: isEscape ? 'chiikawa_escape' : 'chiikawa_stage6',
       label: isEscape ? '' : '드디어 말했다!',
       hideLabel: isEscape,
@@ -193,6 +203,7 @@
     };
     commitScene(endingScene);
     setScene(endingScene); // Switch artwork when ready; text is already visible.
+    updateRetryLabel();
   }
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -230,8 +241,9 @@
     if(!finished){value=Math.max(0,value-rates[config.difficulty]*(config.panic&&value>=70?2:1)*dt);render();frame=requestAnimationFrame(tick)}
   }
   function stop(){cancelAnimationFrame(frame);frame=0;last=0}
-  function start(cfg, isPreview=false){
+  function start(cfg, isPreview=false, preserveRelayRound=false){
     stop();
+    if (!preserveRelayRound) relayRound = 0;
     cancelEndingBuildup();
     if (tapBounce) { tapBounce.cancel(); tapBounce = null; }
     resetScene();config=cfg;value=0;finished=false;previewMode=isPreview;show('game');
@@ -241,6 +253,7 @@
     $('endingBox').classList.remove('escape-ending');
     $('endingTitle').classList.remove('hidden');
     $('endingQuote').classList.add('hidden');
+    $('retry').textContent = '다시 하기';
     // Stage captions become visible together with the decoded first artwork.
     render();frame=requestAnimationFrame(tick);
   }
@@ -264,12 +277,19 @@
       $('characterMotion').classList.add('ending-shiver');
 
       endingTimer = setTimeout(
-        config.ending === 'message' ? beginUsagiEntrance : revealEnding,
+        effectiveEnding() === 'message' ? beginUsagiEntrance : revealEnding,
         ENDING_BUILDUP_MS
       );
     }else render();
   });
-  $('retry').addEventListener('click',()=>start(config, previewMode));
+  $('retry').addEventListener('click',()=>{
+    if (config.ending === 'relay') {
+      relayRound = relayRound === 0 ? 1 : 0;
+      start(config, previewMode, true);
+    } else {
+      start(config, previewMode);
+    }
+  });
   $('backToCreator').addEventListener('click',()=>{
     stop();
     cancelEndingBuildup();
@@ -280,12 +300,12 @@
     show('creator');
   });
   document.querySelectorAll('input[name=ending]').forEach(el=>el.addEventListener('change',()=>{
-    $('messageWrap').classList.toggle('hidden',document.querySelector('input[name=ending]:checked').value!=='message');
+    $('messageWrap').classList.toggle('hidden',!['message','relay'].includes(document.querySelector('input[name=ending]:checked').value));
   }));
   $('makeLink').addEventListener('click',()=>{
     const ending=document.querySelector('input[name=ending]:checked').value;
     const cfg={title:$('titleInput').value.trim()||'치이카와가 할 말이 있대...',ending,message:$('messageInput').value.trim(),difficulty:$('difficulty').value,panic:$('panic').checked};
-    if(ending==='message'&&!cfg.message){$('createError').textContent='말하기 엔딩의 메시지를 입력하세요.';return}
+    if(['message','relay'].includes(ending)&&!cfg.message){$('createError').textContent='우사기 엔딩에서 보여줄 메시지를 입력하세요.';return}
     $('createError').textContent='';
     const url=new URL(location.href);url.search='';url.hash='';
     url.searchParams.set('game',encode(cfg));$('shareLink').value=url.href;
@@ -301,7 +321,7 @@
   if(params.has('game')){
     try{
       const cfg=decode(params.get('game'));
-      if(!cfg||!['escape','message'].includes(cfg.ending)||!Object.prototype.hasOwnProperty.call(rates,cfg.difficulty)||typeof cfg.title!=='string'||typeof cfg.message!=='string'||typeof cfg.panic!=='boolean')throw Error('invalid');
+      if(!cfg||!['escape','message','relay'].includes(cfg.ending)||!Object.prototype.hasOwnProperty.call(rates,cfg.difficulty)||typeof cfg.title!=='string'||typeof cfg.message!=='string'||typeof cfg.panic!=='boolean')throw Error('invalid');
       start(cfg);
     }catch{show('creator');$('createError').textContent='유효하지 않은 게임 링크입니다. 새로 만들어 주세요.'}
   }else show('creator');
