@@ -313,9 +313,9 @@
   function render(){
     $('percent').textContent=Math.round(value)+'%';$('bar').style.width=value+'%';
     $('meter').setAttribute('aria-valuenow',Math.round(value));
-    $('gameHint').textContent = config.panic && value >= 70 && !finished
-      ? '치이카와가 더 부끄러워하고 있어!'
-      : '버튼을 빠르게 눌러 100%를 채워주세요.';
+    const showPanicNotice = config.panic && value >= 70 && !finished;
+    $('panicNotice').classList.toggle('is-visible', showPanicNotice);
+    $('panicNotice').setAttribute('aria-hidden', String(!showPanicNotice));
     if(!finished){
       const index=chooseStageIndex(performance.now());
       setScene({key:'stage-'+index,stageIndex:index,...stages[index]});
