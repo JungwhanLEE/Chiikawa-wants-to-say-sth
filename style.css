@@ -463,3 +463,25 @@ button { font-size: 17px; }
     font-size: clamp(28px, 7.5vw, 35px);
   }
 }
+
+/* Larger Usagi finale message: Dongle has compact glyphs at conventional sizes. */
+#game.is-usagi-finale .speech-bubble {
+  min-height: 96px;
+  max-height: 190px;
+  padding: 16px 17px;
+}
+#game.is-usagi-finale .speech-bubble .speech {
+  font-size: clamp(46px, 10vw, 56px);
+  line-height: 0.99;
+}
+@media (max-width: 400px) {
+  #game.is-usagi-finale .speech-bubble {
+    min-height: 88px;
+    max-height: 168px;
+    padding: 12px 13px;
+  }
+  #game.is-usagi-finale .speech-bubble .speech {
+    font-size: clamp(42px, 12vw, 49px);
+    line-height: 1;
+  }
+}
