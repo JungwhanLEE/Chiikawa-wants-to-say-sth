@@ -505,22 +505,25 @@
   $('makeLink').addEventListener('click',()=>{
     const ending=document.querySelector('input[name=ending]:checked').value;
     const cfg={title:$('titleInput').value.trim()||'치이카와가 할 말이 있대...',ending,message:$('messageInput').value.trim(),difficulty:$('difficulty').value,panic:$('panic').checked};
+    const feedback = $('createError');
     if(['message','relay'].includes(ending)&&!cfg.message){
-      $('createError').textContent='우사기 엔딩에서 보여줄 메시지를 입력하세요.';
-      $('gameUpdateNotice').classList.add('hidden');
+      feedback.classList.remove('is-success');
+      feedback.setAttribute('role','alert');
+      feedback.textContent='우사기 엔딩에서 보여줄 메시지를 입력하세요.';
       $('linkArea').classList.add('hidden'); // Never leave an outdated link after invalid settings.
       return;
     }
-    $('createError').textContent='';
     const wasCreated = !$('linkArea').classList.contains('hidden');
     const url=new URL(location.href);url.search='';url.hash='';
     url.searchParams.set('game',encode(cfg));$('shareLink').value=url.href;
     $('linkArea').classList.remove('hidden');
     $('copyLink').textContent='링크 복사';
-    $('gameUpdateNotice').textContent = wasCreated
+    // Use the existing validation-message position and system font.
+    feedback.classList.add('is-success');
+    feedback.setAttribute('role','status');
+    feedback.textContent = wasCreated
       ? '게임이 갱신됐어요! 변경한 설정이 공유 링크에 반영됐어요.'
       : '게임이 만들어졌어요! 아래 링크로 공유할 수 있어요.';
-    $('gameUpdateNotice').classList.remove('hidden');
   });
   $('copyLink').addEventListener('click',async()=>{
     try{await navigator.clipboard.writeText($('shareLink').value);$('copyLink').textContent='복사 완료!'}
