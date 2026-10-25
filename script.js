@@ -18,7 +18,7 @@
   // Stage6 also appears in the message ending; escape is the runaway ending; stage1 is unused.
   const characterDir = "assets/characters/";
   const artworkNames = ['chiikawa_stage2','chiikawa_stage3','chiikawa_stage4',
-    'chiikawa_stage5','chiikawa_stage6','chiikawa_escape'];
+    'chiikawa_stage5','chiikawa_stage6','chiikawa_escape_custom'];
   const artworkCache = new Map(artworkNames.map(name => {
     const image = new Image();
     image.src = characterDir + name + ".png";
@@ -199,7 +199,7 @@
     $('endingQuote').classList.toggle('hidden', !isEscape);
     const endingScene = {
       key: 'ending-' + effectiveEnding(),
-      image: isEscape ? 'chiikawa_escape' : 'chiikawa_stage6',
+      image: isEscape ? 'chiikawa_escape_custom' : 'chiikawa_stage6',
       label: isEscape ? '' : '드디어 말했다!',
       hideLabel: isEscape,
       speech: isEscape ? '우와아아앙!!!' : '아... 말해버렸다!',
