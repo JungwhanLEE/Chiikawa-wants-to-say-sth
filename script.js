@@ -163,11 +163,11 @@
     $('game').classList.add('is-usagi-finale');
     $('usagiImpact').classList.add('hidden');
     $('stageLabel').classList.add('hidden');
-    $('speech').textContent = '우라~!';
+    $('speech').textContent = config.message;
     $('endingTitle').classList.add('hidden');
     $('endingBox').classList.remove('escape-ending', 'hidden');
     $('endingQuote').classList.add('hidden');
-    $('userMessage').textContent = config.message;
+    $('userMessage').textContent = '우라~!';
     $('userMessage').classList.remove('hidden');
     $('endingText').textContent = '치이카와는 결국 쫓겨나버렸습니다.';
   }
