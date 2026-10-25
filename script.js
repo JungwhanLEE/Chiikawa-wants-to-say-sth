@@ -165,7 +165,8 @@
     $('usagiImpact').classList.remove('hidden');
     $('usagiFinal').classList.add('hidden');
     $('usagiMotion').classList.remove('hidden');
-    endingTimer = setTimeout(finishUsagiEntrance, 950);
+    // Do not leave the characters overlapping after the actual impact.
+    endingTimer = setTimeout(finishUsagiEntrance, 680);
   }
 
   function finishUsagiEntrance() {
