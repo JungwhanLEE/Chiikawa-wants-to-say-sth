@@ -302,7 +302,7 @@ button { font-size: 17px; }
   animation:usagi-charge .50s cubic-bezier(.17,.9,.26,1.08) both;
 }
 #game.is-usagi-entry.is-knockback #characterMotion {
-  animation:chiikawa-shoved .70s linear both;
+  animation:chiikawa-shoved .50s cubic-bezier(.28,.15,.57,.92) both;
 }
 /* Swap only the visible art, keeping the same transform wrapper. */
 #knockbackImage {
@@ -381,11 +381,13 @@ button { font-size: 17px; }
   to{opacity:1;transform:translateX(-50%) scale(1)}
 }
 @keyframes chiikawa-shoved {
-  0%,25%{transform:translate(0,0) rotate(0deg) scale(1);opacity:1}
-  34%{transform:translate(-8px,2px) rotate(-4deg) scale(.94,1.04);opacity:1}
-  47%{transform:translate(-125px,-18px) rotate(-20deg) scale(1.03,.96);opacity:1}
-  66%{transform:translate(-300px,-42px) rotate(-39deg) scale(.94);opacity:.9}
-  83%{transform:translate(-440px,-58px) rotate(-52deg) scale(.86);opacity:.3}
+  /* The distinctive knocked-back drawing remains readable for ~0.4s,
+     then exits quickly instead of dissolving halfway across the frame. */
+  0%{transform:translate(0,0) rotate(-5deg) scale(1);opacity:1}
+  20%{transform:translate(-24px,-5px) rotate(-9deg) scale(1);opacity:1}
+  45%{transform:translate(-69px,-14px) rotate(-18deg) scale(1);opacity:1}
+  65%{transform:translate(-124px,-25px) rotate(-27deg) scale(.98);opacity:1}
+  80%{transform:translate(-200px,-37px) rotate(-38deg) scale(.94);opacity:1}
   100%{transform:translate(-540px,-64px) rotate(-62deg) scale(.82);opacity:0}
 }
 @keyframes usagi-message-reveal {
