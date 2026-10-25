@@ -72,7 +72,10 @@
     $('stageLabel').classList.toggle('hidden', !!scene.hideLabel);
     $('speech').textContent = scene.speech;
     $('speech').closest('.speech-row').classList.remove('hidden');
-    if (scene.ending) $('endingBox').classList.remove('hidden');
+    if (scene.ending) {
+      cancelEndingBuildup();
+      $('endingBox').classList.remove('hidden');
+    }
   }
 
   function setScene(scene) {
@@ -127,7 +130,16 @@
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0, previewMode=false;
+  const ENDING_BUILDUP_MS = 1300;
+  let endingTimer = null;
   let tapBounce = null;
+
+  function cancelEndingBuildup() {
+    if (endingTimer !== null) clearTimeout(endingTimer);
+    endingTimer = null;
+    $('game').classList.remove('is-ending-transition');
+    $('characterMotion').classList.remove('ending-shiver');
+  }
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function bounceTapButton() {
@@ -166,6 +178,7 @@
   function stop(){cancelAnimationFrame(frame);frame=0;last=0}
   function start(cfg, isPreview=false){
     stop();
+    cancelEndingBuildup();
     if (tapBounce) { tapBounce.cancel(); tapBounce = null; }
     resetScene();config=cfg;value=0;finished=false;previewMode=isPreview;show('game');
     $('gameTitle').textContent=cfg.title;
@@ -182,28 +195,43 @@
     bounceTapButton();
     value=Math.min(100,value+5);
     if(value>=100){
-      finished=true;stop();render();$('tap').classList.add('hidden');
-      const isEscape = config.ending === 'escape';
-      $('endingBox').classList.toggle('escape-ending', isEscape);
-      $('endingTitle').textContent = isEscape ? '' : '드디어 말했다!';
-      $('endingTitle').classList.toggle('hidden', isEscape);
-      $('endingText').textContent = isEscape
-        ? '치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.'
-        : config.message;
-      $('endingQuote').classList.toggle('hidden', !isEscape);
-      setScene({
-        key: 'ending-' + config.ending,
-        image: isEscape ? 'chiikawa_escape' : 'chiikawa_stage6',
-        label: isEscape ? '' : '드디어 말했다!',
-        hideLabel: isEscape,
-        speech: isEscape ? '우와아아앙!!!' : '아... 말해버렸다!',
-        ending: true
-      });
+      finished=true;
+      stop();
+      render(); // Freeze the full gauge at 100%.
+      if (tapBounce) { tapBounce.cancel(); tapBounce = null; }
+      // Preserve the currently visible PNG while the buildup shakes it.
+      // Cancel a still-decoding gameplay frame to prevent text from reappearing.
+      ++swapVersion;
+      requestedScene = '';
+      $('game').classList.add('is-ending-transition');
+      $('characterMotion').classList.remove(...motionStageClasses);
+      $('characterMotion').classList.add('ending-shiver');
+
+      endingTimer = setTimeout(() => {
+        endingTimer = null;
+        const isEscape = config.ending === 'escape';
+        $('endingBox').classList.toggle('escape-ending', isEscape);
+        $('endingTitle').textContent = isEscape ? '' : '드디어 말했다!';
+        $('endingTitle').classList.toggle('hidden', isEscape);
+        $('endingText').textContent = isEscape
+          ? '치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.'
+          : config.message;
+        $('endingQuote').classList.toggle('hidden', !isEscape);
+        setScene({
+          key: 'ending-' + config.ending,
+          image: isEscape ? 'chiikawa_escape' : 'chiikawa_stage6',
+          label: isEscape ? '' : '드디어 말했다!',
+          hideLabel: isEscape,
+          speech: isEscape ? '우와아아앙!!!' : '아... 말해버렸다!',
+          ending: true
+        });
+      }, ENDING_BUILDUP_MS);
     }else render();
   });
   $('retry').addEventListener('click',()=>start(config, previewMode));
   $('backToCreator').addEventListener('click',()=>{
     stop();
+    cancelEndingBuildup();
     ++swapVersion;
     requestedScene = '';
     previewMode=false;
