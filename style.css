@@ -374,3 +374,60 @@ button { font-size: 17px; }
   #game.is-usagi-entry .usagi-art {transform:translateX(0)}
   #game.is-usagi-entry #characterMotion{opacity:0}
 }
+
+/* Usagi finale: the player's words belong to the large centered speech bubble. */
+#game.is-usagi-finale .speech-row {
+  justify-content: center;
+  width: 100%;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+  z-index: 5;
+}
+#game.is-usagi-finale .speech-bubble {
+  position: relative;
+  width: 96%;
+  max-width: 96%;
+  min-height: 72px;
+  max-height: 148px;
+  padding: 15px 18px;
+  border-radius: 23px;
+  border-width: 3px;
+  border-color: #aa5d80;
+  box-shadow: 0 6px 0 #f6cede, 0 12px 20px #a85c8015;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: usagi-message-reveal .72s .12s cubic-bezier(.18,1.5,.32,1) both;
+}
+#game.is-usagi-finale .speech-bubble .speech {
+  display: block;
+  width: 100%;
+  font-size: clamp(23px, 5.5vw, 32px);
+  line-height: 1.25;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #a42865;
+}
+#game.is-usagi-finale .message-reveal {
+  margin: 6px auto 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 29px;
+  color: #c53b72;
+  animation: none;
+}
+@media (max-width:400px) {
+  #game.is-usagi-finale .speech-bubble {
+    max-height: 123px;
+    min-height: 65px;
+    padding: 12px 13px;
+  }
+  #game.is-usagi-finale .speech-bubble .speech {
+    font-size: clamp(21px, 6vw, 27px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #game.is-usagi-finale .speech-bubble { animation: none; }
+}
