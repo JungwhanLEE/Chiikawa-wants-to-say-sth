@@ -249,3 +249,24 @@ button { font-size: 17px; }
 @media (prefers-reduced-motion: reduce) {
   #tap { box-shadow: 0 3px 0 #964766; }
 }
+
+/* Suspenseful 100%-filled pause before switching to the ending artwork. */
+#game.is-ending-transition .speech-row,
+#game.is-ending-transition #stageLabel,
+#game.is-ending-transition .meterhead,
+#game.is-ending-transition .meter,
+#game.is-ending-transition #tap,
+#game.is-ending-transition > .muted.small {
+  visibility: hidden;
+}
+.character-image-wrap.ending-shiver {
+  animation: chiikawa-ending-shiver 0.26s linear infinite;
+}
+@keyframes chiikawa-ending-shiver {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  20%, 60% { transform: translateX(-3px) rotate(-0.65deg); }
+  40%, 80% { transform: translateX(3px) rotate(0.65deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .character-image-wrap.ending-shiver { animation: none; }
+}
