@@ -149,6 +149,7 @@
     $('game').classList.remove('is-ending-transition', 'is-usagi-entry', 'is-usagi-finale');
     $('characterMotion').classList.remove('ending-shiver');
     $('usagiMotion').classList.add('hidden');
+    $('usagiFinal').classList.add('hidden');
     $('usagiImpact').classList.add('hidden');
     $('userMessage').classList.add('hidden');
   }
@@ -162,6 +163,7 @@
     $('stageLabel').textContent = '우사기 등장!';
     $('stageLabel').classList.remove('hidden');
     $('usagiImpact').classList.remove('hidden');
+    $('usagiFinal').classList.add('hidden');
     $('usagiMotion').classList.remove('hidden');
     endingTimer = setTimeout(finishUsagiEntrance, 950);
   }
@@ -170,6 +172,8 @@
     endingTimer = null;
     $('game').classList.remove('is-usagi-entry');
     $('game').classList.add('is-usagi-finale');
+    $('usagiMotion').classList.add('hidden');
+    $('usagiFinal').classList.remove('hidden');
     $('usagiImpact').classList.add('hidden');
     $('stageLabel').classList.add('hidden');
     $('speech').textContent = config.message;
