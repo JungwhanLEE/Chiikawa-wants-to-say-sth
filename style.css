@@ -544,3 +544,49 @@ button { font-size: 17px; }
 @media (prefers-reduced-motion: reduce) {
   #panicNotice.panic-notice { transition: none; }
 }
+
+/* Two brief, pointer-transparent character effects. Character PNGs are untouched. */
+.character .impact-effects,
+.character .finale-effects {
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:7;
+}
+.character .push-star {
+  position:absolute;
+  left:51%;
+  top:58%;
+  font-family:"Jua",sans-serif;
+  font-size:21px;
+  line-height:1;
+  color:#f2c75b;
+  text-shadow:0 1px 0 #fff,0 0 5px #ffe8a6;
+  opacity:0;
+  animation:chiikawa-impact-stars .53s var(--delay) ease-out both;
+}
+@keyframes chiikawa-impact-stars {
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(0)}
+  18%{opacity:1;transform:translate(calc(-50% + var(--dx)*.3),calc(-50% + var(--dy)*.3)) scale(1.1) rotate(20deg)}
+  65%{opacity:1;transform:translate(calc(-50% + var(--dx)*.8),calc(-50% + var(--dy)*.8)) scale(1) rotate(var(--rot))}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.45) rotate(var(--rot))}
+}
+.character .finale-spark {
+  position:absolute;
+  width:7px;
+  height:7px;
+  border-radius:35%;
+  box-shadow:0 0 4px #ffffff;
+  opacity:0;
+  animation:usagi-spark-burst .87s var(--delay) cubic-bezier(.2,.62,.3,1) both;
+}
+@keyframes usagi-spark-burst {
+  0%{opacity:0;transform:translate(0,0) scale(.3)}
+  16%{opacity:1;transform:translate(calc(var(--dx)*.25),calc(var(--dy)*.25)) scale(1.2)}
+  70%{opacity:.95;transform:translate(calc(var(--dx)*.8),calc(var(--dy)*.8)) scale(.9)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.35)}
+}
+@media(prefers-reduced-motion:reduce){
+  .character .push-star,.character .finale-spark{animation:none;display:none}
+}
