@@ -251,7 +251,6 @@ button { font-size: 17px; }
 }
 
 /* Suspenseful 100%-filled pause before switching to the ending artwork. */
-#game.is-ending-transition .speech-row,
 #game.is-ending-transition #stageLabel,
 #game.is-ending-transition .meterhead,
 #game.is-ending-transition .meter,
