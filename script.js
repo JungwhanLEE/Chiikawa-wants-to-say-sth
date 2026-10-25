@@ -357,7 +357,7 @@
     $('endingQuote').classList.add('hidden');
     $('userMessage').textContent = '우라~!';
     $('userMessage').classList.remove('hidden');
-    $('endingText').textContent = '치이카와는 결국 쫓겨나버렸습니다.';
+    $('endingText').textContent = '우사기가 대신 전해주는구나!';
     updateRetryLabel();
   }
 
