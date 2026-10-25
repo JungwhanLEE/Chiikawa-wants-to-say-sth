@@ -232,6 +232,10 @@
       star.textContent = i%3===0 ? '✧' : '✦';
       star.style.setProperty('--dx',dx+'px');
       star.style.setProperty('--dy',dy+'px');
+      star.style.setProperty('--dx30',Math.round(dx*.3)+'px');
+      star.style.setProperty('--dy30',Math.round(dy*.3)+'px');
+      star.style.setProperty('--dx80',Math.round(dx*.8)+'px');
+      star.style.setProperty('--dy80',Math.round(dy*.8)+'px');
       star.style.setProperty('--rot',(i%2?-90:115)+'deg');
       star.style.setProperty('--delay',(i%3*20)+'ms');
       layer.appendChild(star);
@@ -257,8 +261,14 @@
         spark.style.left=x+'%';
         spark.style.top=y+'%';
         spark.style.backgroundColor=palette[(i+j)%palette.length];
-        spark.style.setProperty('--dx',Math.round(Math.cos(angle)*radius)+'px');
-        spark.style.setProperty('--dy',Math.round(Math.sin(angle)*radius)+'px');
+        const dx=Math.round(Math.cos(angle)*radius);
+        const dy=Math.round(Math.sin(angle)*radius);
+        spark.style.setProperty('--dx',dx+'px');
+        spark.style.setProperty('--dy',dy+'px');
+        spark.style.setProperty('--dx25',Math.round(dx*.25)+'px');
+        spark.style.setProperty('--dy25',Math.round(dy*.25)+'px');
+        spark.style.setProperty('--dx80',Math.round(dx*.8)+'px');
+        spark.style.setProperty('--dy80',Math.round(dy*.8)+'px');
         spark.style.setProperty('--delay',delay+'ms');
         layer.appendChild(spark);
       }
