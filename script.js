@@ -43,14 +43,36 @@
   let swapVersion = 0;
   let frontImage = $('stageImage');
   let backImage = $('stageImageNext');
+  const FRAME_FADE_MS = 180;
+  const MOTION_BLEND_MS = 220;
+  const TEXT_FADE_MS = 120;
+  let frameFadeTimer = null;
+  let motionBlend = null;
+
+  function cancelFrameFade() {
+    if (frameFadeTimer !== null) clearTimeout(frameFadeTimer);
+    frameFadeTimer = null;
+    // A completed frame always remains visible while the unused buffer is hidden.
+    backImage.classList.remove('frame-visible');
+    backImage.classList.add('hidden');
+  }
+  function fadeUpdatedText(node) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        typeof node.animate !== 'function') return;
+    node.animate([{opacity:.35},{opacity:1}], {duration:TEXT_FADE_MS, easing:'ease-out'});
+  }
 
   function resetScene() {
+    cancelFrameFade();
+    if (motionBlend) { motionBlend.cancel(); motionBlend = null; }
     ++swapVersion; // Cancel any image decode callbacks from the preceding game.
     requestedScene = "";
     displayedScene = "";
     visibleStageIndex = 0;
     holdUntil = 0;
     $('characterMotion').classList.remove(...motionStageClasses);
+    frontImage.classList.remove('frame-visible');
+    backImage.classList.remove('frame-visible');
     frontImage.classList.add('hidden');
     backImage.classList.add('hidden');
     $('stageLabel').classList.add('hidden');
@@ -65,11 +87,28 @@
     const targetMotion = Number.isInteger(scene.stageIndex)
       ? motionStageClasses[scene.stageIndex] : null;
     if (!targetMotion || !motionLayer.classList.contains(targetMotion)) {
+      // Bridge from the *currently rendered* movement rather than snapping to
+      // the initial pose of the next stage's looping CSS animation.
+      if (motionBlend) { motionBlend.cancel(); motionBlend = null; }
+      const canBlend = !!targetMotion &&
+        motionStageClasses.some(cls => motionLayer.classList.contains(cls)) &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+        typeof motionLayer.animate === 'function';
+      const previousPose = canBlend ? getComputedStyle(motionLayer).transform : null;
       motionLayer.classList.remove(...motionStageClasses);
       if (targetMotion) motionLayer.classList.add(targetMotion);
+      if (canBlend && previousPose && previousPose !== 'none') {
+        const newPose = getComputedStyle(motionLayer).transform;
+        motionBlend = motionLayer.animate(
+          [{transform:previousPose},{transform:newPose}],
+          {duration:MOTION_BLEND_MS,easing:'ease-out'}
+        );
+      }
     }
+    if ($('stageLabel').textContent !== scene.label) fadeUpdatedText($('stageLabel'));
     $('stageLabel').textContent = scene.label;
     $('stageLabel').classList.toggle('hidden', !!scene.hideLabel);
+    if ($('speech').textContent !== scene.speech) fadeUpdatedText($('speech'));
     $('speech').textContent = scene.speech;
     $('speech').closest('.speech-row').classList.remove('hidden');
     if (scene.ending) {
@@ -114,11 +153,32 @@
       if (version !== swapVersion || requestedScene !== scene.key) return;
       if (!backImage.complete || !backImage.naturalWidth) return;
 
-      // Swap artwork and both captions in one synchronous turn.
+      // Crossfade two decoded frames without ever showing a blank character.
+      // The old image stays under the new one until the 180ms transition ends.
+      if (frameFadeTimer !== null) {
+        clearTimeout(frameFadeTimer);
+        frameFadeTimer = null;
+      }
       const hadVisibleScene = !!displayedScene;
-      backImage.classList.remove('hidden');
-      frontImage.classList.add('hidden');
-      [frontImage, backImage] = [backImage, frontImage];
+      const oldFrame = frontImage;
+      const nextFrame = backImage;
+      nextFrame.classList.remove('hidden','frame-visible');
+      if (hadVisibleScene) {
+        // Ensure the 0-opacity starting frame is committed before fading in.
+        void nextFrame.offsetWidth;
+      }
+      nextFrame.classList.add('frame-visible');
+      if (hadVisibleScene && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        frameFadeTimer = setTimeout(() => {
+          frameFadeTimer = null;
+          oldFrame.classList.remove('frame-visible');
+          oldFrame.classList.add('hidden');
+        }, FRAME_FADE_MS);
+      } else {
+        oldFrame.classList.remove('frame-visible');
+        oldFrame.classList.add('hidden');
+      }
+      [frontImage, backImage] = [nextFrame, oldFrame];
       displayedScene = scene.key;
       if (Number.isInteger(scene.stageIndex)) {
         visibleStageIndex = scene.stageIndex;
@@ -289,7 +349,9 @@
       stop();
       render(); // Freeze the full gauge at 100%.
       if (tapBounce) { tapBounce.cancel(); tapBounce = null; }
-      // Preserve the currently visible PNG while the buildup shakes it.
+      // Do not leave a fading buffer on screen during the 100% buildup.
+      cancelFrameFade();
+      if (motionBlend) { motionBlend.cancel(); motionBlend = null; }
       // Cancel a still-decoding gameplay frame to prevent text from reappearing.
       ++swapVersion;
       requestedScene = '';
@@ -316,6 +378,8 @@
   $('backToCreator').addEventListener('click',()=>{
     stop();
     cancelEndingBuildup();
+    cancelFrameFade();
+    if (motionBlend) { motionBlend.cancel(); motionBlend = null; }
     $('game').classList.remove('is-escape-finale');
     ++swapVersion;
     requestedScene = '';
