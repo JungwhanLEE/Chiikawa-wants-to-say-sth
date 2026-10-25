@@ -217,7 +217,7 @@
   }
   function updateRetryLabel() {
     $('retry').textContent = config.ending === 'relay' && relayRound === 0
-      ? '이번에는 다를지도...?' : '다시 하기';
+      ? '↺ 이번에는 다를지도...?' : '↺ 다시 하기';
   }
   const ENDING_BUILDUP_MS = 1300;
   let endingTimer = null;
