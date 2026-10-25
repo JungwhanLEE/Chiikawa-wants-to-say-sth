@@ -288,23 +288,25 @@ button { font-size: 17px; }
 .usagi-art {
   position:absolute;
   z-index:4;
-  width:178px;
-  max-width:52%;
   height:auto;
-  left:calc(50% - 45px);
-  bottom:15px;
-  transform:translateX(160%);
+  width:180px;
+  max-width:54%;
+  left:50%;
+  bottom:12px;
   pointer-events:none;
   filter:drop-shadow(0 4px 1px #693d4012);
 }
-#game.is-usagi-entry .usagi-art {
+.usagi-enter-art {transform:translateX(160%);}
+.usagi-final-art {transform:translateX(-50%);}
+#game.is-usagi-entry .usagi-enter-art {
   animation:usagi-charge .64s cubic-bezier(.22,.9,.32,1.22) both;
 }
 #game.is-usagi-entry #characterMotion {
   animation:chiikawa-shoved .78s cubic-bezier(.5,0,.8,1) both;
 }
-#game.is-usagi-finale .usagi-art {
-  transform:translateX(0);
+#game.is-usagi-finale .usagi-final-art {
+  transform:translateX(-50%);
+  animation:usagi-final-arrive .3s cubic-bezier(.17,1.3,.3,1) both;
 }
 #game.is-usagi-finale #characterMotion {opacity:0}
 #game.is-usagi-entry #tap,
@@ -352,8 +354,12 @@ button { font-size: 17px; }
 }
 @keyframes usagi-charge {
   0%{transform:translateX(160%) rotate(9deg)}
-  70%{transform:translateX(-9%) rotate(-7deg)}
-  100%{transform:translateX(0) rotate(0)}
+  70%{transform:translateX(-60%) rotate(-7deg)}
+  100%{transform:translateX(-50%) rotate(0)}
+}
+@keyframes usagi-final-arrive {
+  from{opacity:0;transform:translateX(-50%) scale(.9)}
+  to{opacity:1;transform:translateX(-50%) scale(1)}
 }
 @keyframes chiikawa-shoved {
   0%,20%{transform:translateX(0) rotate(0);opacity:1}
@@ -367,11 +373,12 @@ button { font-size: 17px; }
   100%{opacity:1;transform:translateY(0) scale(1) rotate(0);filter:blur(0)}
 }
 @media(prefers-reduced-motion:reduce){
-  #game.is-usagi-entry .usagi-art,
+  #game.is-usagi-entry .usagi-enter-art,
+  #game.is-usagi-finale .usagi-final-art,
   #game.is-usagi-entry #characterMotion,
   #game.is-usagi-finale .message-reveal,
   .usagi-impact {animation:none}
-  #game.is-usagi-entry .usagi-art {transform:translateX(0)}
+  #game.is-usagi-entry .usagi-enter-art {transform:translateX(-50%)}
   #game.is-usagi-entry #characterMotion{opacity:0}
 }
 
