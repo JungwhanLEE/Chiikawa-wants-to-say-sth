@@ -233,13 +233,13 @@
     $('usagiImpact').classList.remove('hidden');
     $('usagiFinal').classList.add('hidden');
     $('usagiMotion').classList.remove('hidden');
-    // Change expression at impact; animate the wrapper for the next 0.7s.
+    // Show the knockback sprite at impact, then carry it visibly across the frame for 0.5s.
     impactTimer = setTimeout(() => {
       impactTimer = null;
       $('knockbackImage').classList.remove('hidden');
       $('game').classList.add('is-knockback');
     }, 110);
-    endingTimer = setTimeout(finishUsagiEntrance, 860);
+    endingTimer = setTimeout(finishUsagiEntrance, 640);
   }
 
   function finishUsagiEntrance() {
