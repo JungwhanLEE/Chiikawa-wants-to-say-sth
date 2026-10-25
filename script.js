@@ -203,6 +203,8 @@
     };
     commitScene(endingScene);
     setScene(endingScene); // Switch artwork when ready; text is already visible.
+    // Persist beyond the shiver cleanup and asynchronous artwork swap.
+    $('game').classList.toggle('is-escape-finale', isEscape);
     updateRetryLabel();
   }
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -245,6 +247,7 @@
     stop();
     if (!preserveRelayRound) relayRound = 0;
     cancelEndingBuildup();
+    $('game').classList.remove('is-escape-finale');
     if (tapBounce) { tapBounce.cancel(); tapBounce = null; }
     resetScene();config=cfg;value=0;finished=false;previewMode=isPreview;show('game');
     $('gameTitle').textContent=cfg.title;
@@ -293,6 +296,7 @@
   $('backToCreator').addEventListener('click',()=>{
     stop();
     cancelEndingBuildup();
+    $('game').classList.remove('is-escape-finale');
     ++swapVersion;
     requestedScene = '';
     previewMode=false;
