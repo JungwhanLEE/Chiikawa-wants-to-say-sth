@@ -141,17 +141,21 @@
   }
   const ENDING_BUILDUP_MS = 1300;
   let endingTimer = null;
+  let impactTimer = null;
   let tapBounce = null;
 
   function cancelEndingBuildup() {
     if (endingTimer !== null) clearTimeout(endingTimer);
+    if (impactTimer !== null) clearTimeout(impactTimer);
     endingTimer = null;
-    $('game').classList.remove('is-ending-transition', 'is-usagi-entry', 'is-usagi-finale');
+    impactTimer = null;
+    $('game').classList.remove('is-ending-transition', 'is-usagi-entry', 'is-usagi-finale', 'is-knockback');
     $('characterMotion').classList.remove('ending-shiver');
     $('usagiMotion').classList.add('hidden');
     $('usagiFinal').classList.add('hidden');
     $('usagiImpact').classList.add('hidden');
     $('userMessage').classList.add('hidden');
+    $('knockbackImage').classList.add('hidden');
   }
 
   // The custom-message ending is deliberately stolen by Usagi.
@@ -165,13 +169,21 @@
     $('usagiImpact').classList.remove('hidden');
     $('usagiFinal').classList.add('hidden');
     $('usagiMotion').classList.remove('hidden');
-    // Do not leave the characters overlapping after the actual impact.
-    endingTimer = setTimeout(finishUsagiEntrance, 680);
+    // Change expression at impact; animate the wrapper for the next 0.7s.
+    impactTimer = setTimeout(() => {
+      impactTimer = null;
+      $('knockbackImage').classList.remove('hidden');
+      $('game').classList.add('is-knockback');
+    }, 110);
+    endingTimer = setTimeout(finishUsagiEntrance, 860);
   }
 
   function finishUsagiEntrance() {
     endingTimer = null;
-    $('game').classList.remove('is-usagi-entry');
+    if (impactTimer !== null) clearTimeout(impactTimer);
+    impactTimer = null;
+    $('game').classList.remove('is-usagi-entry', 'is-knockback');
+    $('knockbackImage').classList.add('hidden');
     $('game').classList.add('is-usagi-finale');
     $('usagiMotion').classList.add('hidden');
     $('usagiFinal').classList.remove('hidden');
@@ -237,6 +249,9 @@
   function render(){
     $('percent').textContent=Math.round(value)+'%';$('bar').style.width=value+'%';
     $('meter').setAttribute('aria-valuenow',Math.round(value));
+    $('gameHint').textContent = config.panic && value >= 70 && !finished
+      ? '치이카와가 더 부끄러워하고 있어!'
+      : '버튼을 빠르게 눌러 100%를 채워주세요.';
     if(!finished){
       const index=chooseStageIndex(performance.now());
       setScene({key:'stage-'+index,stageIndex:index,...stages[index]});
