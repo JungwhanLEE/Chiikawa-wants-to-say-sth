@@ -137,8 +137,39 @@
   function cancelEndingBuildup() {
     if (endingTimer !== null) clearTimeout(endingTimer);
     endingTimer = null;
-    $('game').classList.remove('is-ending-transition');
+    $('game').classList.remove('is-ending-transition', 'is-usagi-entry', 'is-usagi-finale');
     $('characterMotion').classList.remove('ending-shiver');
+    $('usagiMotion').classList.add('hidden');
+    $('usagiImpact').classList.add('hidden');
+    $('userMessage').classList.add('hidden');
+  }
+
+  // The custom-message ending is deliberately stolen by Usagi.
+  function beginUsagiEntrance() {
+    cancelEndingBuildup();
+    $('game').classList.add('is-usagi-entry');
+    $('speech').textContent = '이얏하~!';
+    $('speech').closest('.speech-row').classList.remove('hidden');
+    $('stageLabel').textContent = '우사기 등장!';
+    $('stageLabel').classList.remove('hidden');
+    $('usagiImpact').classList.remove('hidden');
+    $('usagiMotion').classList.remove('hidden');
+    endingTimer = setTimeout(finishUsagiEntrance, 950);
+  }
+
+  function finishUsagiEntrance() {
+    endingTimer = null;
+    $('game').classList.remove('is-usagi-entry');
+    $('game').classList.add('is-usagi-finale');
+    $('usagiImpact').classList.add('hidden');
+    $('stageLabel').classList.add('hidden');
+    $('speech').textContent = '우라~!';
+    $('endingTitle').classList.add('hidden');
+    $('endingBox').classList.remove('escape-ending', 'hidden');
+    $('endingQuote').classList.add('hidden');
+    $('userMessage').textContent = config.message;
+    $('userMessage').classList.remove('hidden');
+    $('endingText').textContent = '치이카와는 결국 쫓겨나버렸습니다.';
   }
 
   function revealEnding() {
@@ -232,7 +263,10 @@
       $('characterMotion').classList.remove(...motionStageClasses);
       $('characterMotion').classList.add('ending-shiver');
 
-      endingTimer = setTimeout(revealEnding, ENDING_BUILDUP_MS);
+      endingTimer = setTimeout(
+        config.ending === 'message' ? beginUsagiEntrance : revealEnding,
+        ENDING_BUILDUP_MS
+      );
     }else render();
   });
   $('retry').addEventListener('click',()=>start(config, previewMode));
