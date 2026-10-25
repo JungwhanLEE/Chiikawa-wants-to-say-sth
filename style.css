@@ -441,47 +441,36 @@ button { font-size: 17px; }
   display: none !important;
 }
 
-/* Character-specific dialogue: shy Chiikawa vs. energetic Usagi. */
+/* Consistent Gamja Flower dialogue; Jua only for the final user-written message. */
 .speech-bubble .speech {
-  font-family: "Gamja Flower", "Apple SD Gothic Neo", cursive, sans-serif;
+  font-family: "Gamja Flower", "Apple SD Gothic Neo", sans-serif;
   font-weight: 400;
 }
-#game.is-usagi-entry .speech-bubble .speech,
-#game.is-usagi-finale .speech-bubble .speech {
-  font-family: "Dongle", "Apple SD Gothic Neo", sans-serif;
-  font-weight: 700;
-  font-size: 36px;
-  line-height: 1;
+#game.is-usagi-entry .speech-bubble .speech {
+  font-family: "Gamja Flower", "Apple SD Gothic Neo", sans-serif;
+  font-weight: 400;
+  font-size: 29px;
+  line-height: 1.15;
 }
-#game.is-usagi-finale .speech-bubble .speech {
-  font-size: clamp(31px, 7vw, 39px);
-  line-height: 1.05;
-}
-@media (max-width:400px) {
-  #game.is-usagi-entry .speech-bubble .speech { font-size: 32px; }
-  #game.is-usagi-finale .speech-bubble .speech {
-    font-size: clamp(28px, 7.5vw, 35px);
-  }
-}
-
-/* Larger Usagi finale message: Dongle has compact glyphs at conventional sizes. */
 #game.is-usagi-finale .speech-bubble {
   min-height: 96px;
   max-height: 190px;
   padding: 16px 17px;
 }
 #game.is-usagi-finale .speech-bubble .speech {
-  font-size: clamp(46px, 10vw, 56px);
-  line-height: 0.99;
+  font-family: "Jua", "Apple SD Gothic Neo", sans-serif;
+  font-weight: 400;
+  font-size: clamp(28px, 6.5vw, 38px);
+  line-height: 1.35;
 }
-@media (max-width: 400px) {
+@media (max-width:400px) {
+  #game.is-usagi-entry .speech-bubble .speech {font-size:27px;}
   #game.is-usagi-finale .speech-bubble {
     min-height: 88px;
     max-height: 168px;
     padding: 12px 13px;
   }
   #game.is-usagi-finale .speech-bubble .speech {
-    font-size: clamp(42px, 12vw, 49px);
-    line-height: 1;
+    font-size: clamp(27px, 7.5vw, 32px);
   }
 }
