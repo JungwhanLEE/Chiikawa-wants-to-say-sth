@@ -12,6 +12,7 @@
   <fieldset><legend>100% 달성 시 엔딩</legend>
     <label class="choice"><input type="radio" name="ending" value="escape" checked> 도망가기</label>
     <label class="choice"><input type="radio" name="ending" value="message"> 하고 싶은 말 하기</label>
+    <label class="choice"><input type="radio" name="ending" value="relay"> 연속 (첫 판 도망 → 다음 판 우사기)</label>
   </fieldset>
   <label id="messageWrap" class="hidden">마지막에 보여줄 말<textarea id="messageInput" maxlength="300" placeholder="하고 싶은 말을 입력하세요."></textarea></label>
   <label>난이도<select id="difficulty"><option value="easy">쉬움 (초당 6% 감소)</option><option value="normal" selected>보통 (초당 8% 감소)</option><option value="hard">어려움 (초당 10% 감소)</option></select></label>
@@ -42,4 +43,4 @@
   <button id="tap" class="primary">♡ 꾹꾹... 응원하기!</button>
   <div id="endingBox" class="ending hidden" aria-live="polite"><h2 id="endingTitle"></h2><p id="endingText"></p><div id="userMessage" class="message-reveal hidden"></div><p id="endingQuote" class="hidden">"왜 애를 울려!"</p><button id="retry">다시 하기</button></div>
   <p class="muted small">버튼을 빠르게 눌러 100%를 채워주세요.</p>
-</section></main><script src="script.js?v=20261025-usagi-bubble-2"></script></body></html>
+</section></main><script src="script.js?v=20261025-relay-1"></script></body></html>
