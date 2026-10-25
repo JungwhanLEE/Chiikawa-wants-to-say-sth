@@ -518,3 +518,27 @@ button { font-size: 17px; }
   .character #stageImage,
   .character #stageImageNext { transition: none; }
 }
+
+/* Panic mode alert has its own reserved line above the tap button.
+   Keep the ordinary game hint below the button unchanged. */
+#panicNotice.panic-notice {
+  min-height: 25px;
+  margin: 9px 0 0;
+  text-align: center;
+  font-family: "Jua", "Apple SD Gothic Neo", sans-serif;
+  font-size: 19px;
+  line-height: 25px;
+  color: #bf4c7c;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 160ms ease-out, visibility 160ms;
+  pointer-events: none;
+}
+#panicNotice.panic-notice.is-visible { opacity: 1; visibility: visible; }
+#game.is-ending-transition #panicNotice,
+#game.is-usagi-entry #panicNotice,
+#game.is-usagi-finale #panicNotice,
+#game.is-escape-finale #panicNotice { visibility: hidden; opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  #panicNotice.panic-notice { transition: none; }
+}
