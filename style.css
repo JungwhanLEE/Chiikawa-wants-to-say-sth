@@ -431,3 +431,12 @@ button { font-size: 17px; }
 @media (prefers-reduced-motion: reduce) {
   #game.is-usagi-finale .speech-bubble { animation: none; }
 }
+
+/* Escape finale: remove the completed gauge and tapping controls permanently.
+   The shiver's temporary visibility state should not be restored after ending. */
+#game.is-escape-finale .meterhead,
+#game.is-escape-finale .meter,
+#game.is-escape-finale #tap,
+#game.is-escape-finale > .muted.small {
+  display: none !important;
+}
