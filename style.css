@@ -302,7 +302,7 @@ button { font-size: 17px; }
   animation:usagi-charge .50s cubic-bezier(.17,.9,.26,1.08) both;
 }
 #game.is-usagi-entry.is-knockback #characterMotion {
-  animation:chiikawa-shoved .50s cubic-bezier(.28,.15,.57,.92) both;
+  animation:chiikawa-shoved .50s cubic-bezier(.35,.05,.75,.95) both;
 }
 /* Swap only the visible art, keeping the same transform wrapper. */
 #knockbackImage {
@@ -381,14 +381,14 @@ button { font-size: 17px; }
   to{opacity:1;transform:translateX(-50%) scale(1)}
 }
 @keyframes chiikawa-shoved {
-  /* The distinctive knocked-back drawing remains readable for ~0.4s,
-     then exits quickly instead of dissolving halfway across the frame. */
-  0%{transform:translate(0,0) rotate(-5deg) scale(1);opacity:1}
-  20%{transform:translate(-24px,-5px) rotate(-9deg) scale(1);opacity:1}
-  45%{transform:translate(-69px,-14px) rotate(-18deg) scale(1);opacity:1}
-  65%{transform:translate(-124px,-25px) rotate(-27deg) scale(.98);opacity:1}
-  80%{transform:translate(-200px,-37px) rotate(-38deg) scale(.94);opacity:1}
-  100%{transform:translate(-540px,-64px) rotate(-62deg) scale(.82);opacity:0}
+  /* Impact frame stays readable, then accelerates in one continuous arc. */
+  0%{transform:translate(0,0) rotate(-4deg) scale(1);opacity:1}
+  20%{transform:translate(-27px,-6px) rotate(-10deg) scale(1);opacity:1}
+  40%{transform:translate(-70px,-16px) rotate(-16deg) scale(1);opacity:1}
+  60%{transform:translate(-146px,-30px) rotate(-26deg) scale(.99);opacity:1}
+  80%{transform:translate(-282px,-52px) rotate(-39deg) scale(.94);opacity:1}
+  96%{transform:translate(-477px,-72px) rotate(-56deg) scale(.84);opacity:1}
+  100%{transform:translate(-540px,-78px) rotate(-61deg) scale(.82);opacity:0}
 }
 @keyframes usagi-message-reveal {
   0%{opacity:0;transform:translateY(22px) scale(.65) rotate(-4deg);filter:blur(5px)}
@@ -590,3 +590,23 @@ button { font-size: 17px; }
 @media(prefers-reduced-motion:reduce){
   .character .push-star,.character .finale-spark{animation:none;display:none}
 }
+
+/* Preloaded escape art appears on the same frame as the escape ending text. */
+#escapeImage {
+  position:absolute;
+  left:50%;
+  top:50%;
+  display:block;
+  width:auto;
+  height:235px;
+  max-width:88%;
+  max-height:100%;
+  object-fit:contain;
+  transform:translate(-50%,-50%);
+  visibility:hidden;
+  pointer-events:none;
+}
+#game.is-escape-finale #escapeImage {visibility:visible}
+#game.is-escape-finale #stageImage,
+#game.is-escape-finale #stageImageNext {visibility:hidden}
+@media(max-width:400px){#escapeImage{height:205px;max-width:90%}}
