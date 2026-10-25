@@ -266,8 +266,14 @@
     if (reduceMotion.matches) return;
     const layer = $('usagiFireworks');
     layer.replaceChildren();
-    // Four distinct pops in a playful "one-two, one-two" rhythm.
-    const bursts = [[17,32,0],[82,36,180],[21,72,760],[79,70,940]];
+    // "One-two, one-two" twice: 4 distinct pulses, repeated after a brief pause.
+    // The two cycles have matching timing so the rhythm remains recognizable.
+    const beat = [[17,32,0],[82,36,180],[21,72,760],[79,70,940]];
+    const bursts = [0,1700].flatMap((offset,cycle) =>
+      beat.map(([x,y,delay]) => [
+        cycle ? 100-x : x, y, delay+offset
+      ])
+    );
     const palette=['#f79eb9','#f4c65c','#87d7e5','#b4dda4'];
     bursts.forEach(([x,y,delay],j) => {
       for (let i=0;i<8;i++) {
@@ -293,7 +299,7 @@
     effectsTimer = setTimeout(() => {
       layer.replaceChildren();
       effectsTimer = null;
-    }, 1950);
+    }, 3700);
   }
 
   function cancelEndingBuildup() {
@@ -499,11 +505,22 @@
   $('makeLink').addEventListener('click',()=>{
     const ending=document.querySelector('input[name=ending]:checked').value;
     const cfg={title:$('titleInput').value.trim()||'치이카와가 할 말이 있대...',ending,message:$('messageInput').value.trim(),difficulty:$('difficulty').value,panic:$('panic').checked};
-    if(['message','relay'].includes(ending)&&!cfg.message){$('createError').textContent='우사기 엔딩에서 보여줄 메시지를 입력하세요.';return}
+    if(['message','relay'].includes(ending)&&!cfg.message){
+      $('createError').textContent='우사기 엔딩에서 보여줄 메시지를 입력하세요.';
+      $('gameUpdateNotice').classList.add('hidden');
+      $('linkArea').classList.add('hidden'); // Never leave an outdated link after invalid settings.
+      return;
+    }
     $('createError').textContent='';
+    const wasCreated = !$('linkArea').classList.contains('hidden');
     const url=new URL(location.href);url.search='';url.hash='';
     url.searchParams.set('game',encode(cfg));$('shareLink').value=url.href;
     $('linkArea').classList.remove('hidden');
+    $('copyLink').textContent='링크 복사';
+    $('gameUpdateNotice').textContent = wasCreated
+      ? '게임이 갱신됐어요! 변경한 설정이 공유 링크에 반영됐어요.'
+      : '게임이 만들어졌어요! 아래 링크로 공유할 수 있어요.';
+    $('gameUpdateNotice').classList.remove('hidden');
   });
   $('copyLink').addEventListener('click',async()=>{
     try{await navigator.clipboard.writeText($('shareLink').value);$('copyLink').textContent='복사 완료!'}
