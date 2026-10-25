@@ -268,8 +268,8 @@
     layer.replaceChildren();
     // "One-two, one-two" twice: 4 distinct pulses, repeated after a brief pause.
     // The two cycles have matching timing so the rhythm remains recognizable.
-    const beat = [[17,32,0],[82,36,180],[21,72,760],[79,70,940]];
-    const bursts = [0,1700].flatMap((offset,cycle) =>
+    const beat = [[17,32,0],[82,36,160],[21,72,590],[79,70,750]];
+    const bursts = [0,1320].flatMap((offset,cycle) =>
       beat.map(([x,y,delay]) => [
         cycle ? 100-x : x, y, delay+offset
       ])
@@ -299,7 +299,7 @@
     effectsTimer = setTimeout(() => {
       layer.replaceChildren();
       effectsTimer = null;
-    }, 3700);
+    }, 3000);
   }
 
   function cancelEndingBuildup() {
