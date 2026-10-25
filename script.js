@@ -250,7 +250,8 @@
     if (reduceMotion.matches) return;
     const layer = $('usagiFireworks');
     layer.replaceChildren();
-    const bursts = [[17,29,0],[81,34,180],[22,74,350],[80,75,490]];
+    // Two distinct celebrations, left/right in each pulse, not four separate pops.
+    const bursts = [[17,32,0],[82,36,0],[21,72,570],[79,70,570]];
     const palette=['#f79eb9','#f4c65c','#87d7e5','#b4dda4'];
     bursts.forEach(([x,y,delay],j) => {
       for (let i=0;i<8;i++) {
@@ -276,7 +277,7 @@
     effectsTimer = setTimeout(() => {
       layer.replaceChildren();
       effectsTimer = null;
-    }, 1800);
+    }, 1600);
   }
 
   function cancelEndingBuildup() {
@@ -357,10 +358,20 @@
       speech: isEscape ? '우와아아앙!!!' : '아... 말해버렸다!',
       ending: true
     };
-    commitScene(endingScene);
-    setScene(endingScene); // Switch artwork when ready; text is already visible.
-    // Persist beyond the shiver cleanup and asynchronous artwork swap.
-    $('game').classList.toggle('is-escape-finale', isEscape);
+    if (isEscape) {
+      // The static escape sprite is already present in the DOM and preloaded.
+      // Reveal it in the exact same update as the ending text, without an
+      // asynchronous decode/crossfade after the ending appears.
+      ++swapVersion;
+      requestedScene = '';
+      cancelFrameFade();
+      commitScene(endingScene);
+      $('game').classList.add('is-escape-finale');
+    } else {
+      commitScene(endingScene);
+      setScene(endingScene);
+      $('game').classList.remove('is-escape-finale');
+    }
     updateRetryLabel();
   }
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
