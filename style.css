@@ -568,8 +568,8 @@ button { font-size: 17px; }
 }
 @keyframes chiikawa-impact-stars {
   0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(0)}
-  18%{opacity:1;transform:translate(calc(-50% + var(--dx)*.3),calc(-50% + var(--dy)*.3)) scale(1.1) rotate(20deg)}
-  65%{opacity:1;transform:translate(calc(-50% + var(--dx)*.8),calc(-50% + var(--dy)*.8)) scale(1) rotate(var(--rot))}
+  18%{opacity:1;transform:translate(calc(-50% + var(--dx30)),calc(-50% + var(--dy30))) scale(1.1) rotate(20deg)}
+  65%{opacity:1;transform:translate(calc(-50% + var(--dx80)),calc(-50% + var(--dy80))) scale(1) rotate(var(--rot))}
   100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.45) rotate(var(--rot))}
 }
 .character .finale-spark {
@@ -583,8 +583,8 @@ button { font-size: 17px; }
 }
 @keyframes usagi-spark-burst {
   0%{opacity:0;transform:translate(0,0) scale(.3)}
-  16%{opacity:1;transform:translate(calc(var(--dx)*.25),calc(var(--dy)*.25)) scale(1.2)}
-  70%{opacity:.95;transform:translate(calc(var(--dx)*.8),calc(var(--dy)*.8)) scale(.9)}
+  16%{opacity:1;transform:translate(var(--dx25),var(--dy25)) scale(1.2)}
+  70%{opacity:.95;transform:translate(var(--dx80),var(--dy80)) scale(.9)}
   100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.35)}
 }
 @media(prefers-reduced-motion:reduce){
