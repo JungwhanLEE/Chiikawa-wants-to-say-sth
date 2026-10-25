@@ -162,6 +162,10 @@
       const hadVisibleScene = !!displayedScene;
       const oldFrame = frontImage;
       const nextFrame = backImage;
+      // Explicit stacking is essential: the two image elements alternate as
+      // front/back buffers, but their DOM order never changes.
+      nextFrame.style.zIndex = '2';
+      oldFrame.style.zIndex = '1';
       nextFrame.classList.remove('hidden','frame-visible');
       if (hadVisibleScene) {
         // Ensure the 0-opacity starting frame is committed before fading in.
