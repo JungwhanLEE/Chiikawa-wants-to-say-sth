@@ -75,6 +75,8 @@
     backImage.classList.remove('frame-visible');
     frontImage.classList.add('hidden');
     backImage.classList.add('hidden');
+    frontImage.style.transition = '';
+    backImage.style.transition = '';
     $('stageLabel').classList.add('hidden');
     $('speech').textContent = '';
     $('speech').closest('.speech-row').classList.add('hidden');
@@ -117,27 +119,32 @@
     }
   }
 
-  function setScene(scene) {
+  function setScene(scene, options = {}) {
+    const instant = options.instant === true;
+    const onReady = typeof options.onReady === 'function' ? options.onReady : null;
     if (requestedScene === scene.key) return;
     requestedScene = scene.key;
     const version = ++swapVersion;
     const asset = artworkCache.get(scene.image);
     if (!asset) {
       if (scene.ending) commitScene(scene);
+      if (onReady) onReady(false);
       return;
     }
 
     if (displayedScene === scene.key) {
       // The correct frame is already visible: cancel a pending outdated change.
       commitScene(scene);
+      if (onReady) onReady(true);
       return;
     }
 
     asset.ready.then(async loaded => {
       if (version !== swapVersion || requestedScene !== scene.key) return;
       if (!loaded) {
-        // Even if the ending image cannot load, never suppress the ending message.
+        // If the asset fails, leave the preceding character frame displayed.
         if (scene.ending) commitScene(scene);
+        if (onReady) onReady(false);
         return;
       }
       // Decode on the hidden buffer while the previous frame remains displayed.
@@ -147,11 +154,16 @@
       } catch {
         if (!backImage.complete || !backImage.naturalWidth) {
           if (scene.ending && version === swapVersion) commitScene(scene);
+          if (onReady && version === swapVersion) onReady(false);
           return;
         }
       }
       if (version !== swapVersion || requestedScene !== scene.key) return;
-      if (!backImage.complete || !backImage.naturalWidth) return;
+      if (!backImage.complete || !backImage.naturalWidth) {
+        if (scene.ending) commitScene(scene);
+        if (onReady) onReady(false);
+        return;
+      }
 
       // Crossfade two decoded frames without ever showing a blank character.
       // The old image stays under the new one until the 180ms transition ends.
@@ -166,13 +178,16 @@
       // front/back buffers, but their DOM order never changes.
       nextFrame.style.zIndex = '2';
       oldFrame.style.zIndex = '1';
+      // Endings swap immediately: text and fully visible art share one frame.
+      nextFrame.style.transition = instant ? 'none' : '';
+      oldFrame.style.transition = instant ? 'none' : '';
       nextFrame.classList.remove('hidden','frame-visible');
-      if (hadVisibleScene) {
+      if (hadVisibleScene && !instant) {
         // Ensure the 0-opacity starting frame is committed before fading in.
         void nextFrame.offsetWidth;
       }
       nextFrame.classList.add('frame-visible');
-      if (hadVisibleScene && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (hadVisibleScene && !instant && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         frameFadeTimer = setTimeout(() => {
           frameFadeTimer = null;
           oldFrame.classList.remove('frame-visible');
@@ -190,6 +205,7 @@
         holdUntil = hadVisibleScene ? performance.now() + MIN_STAGE_HOLD_MS : 0;
       }
       commitScene(scene);
+      if (onReady) onReady(true);
     });
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
@@ -250,8 +266,8 @@
     if (reduceMotion.matches) return;
     const layer = $('usagiFireworks');
     layer.replaceChildren();
-    // Two distinct celebrations, left/right in each pulse, not four separate pops.
-    const bursts = [[17,32,0],[82,36,0],[21,72,570],[79,70,570]];
+    // Four distinct pops in a playful "one-two, one-two" rhythm.
+    const bursts = [[17,32,0],[82,36,180],[21,72,760],[79,70,940]];
     const palette=['#f79eb9','#f4c65c','#87d7e5','#b4dda4'];
     bursts.forEach(([x,y,delay],j) => {
       for (let i=0;i<8;i++) {
@@ -277,7 +293,7 @@
     effectsTimer = setTimeout(() => {
       layer.replaceChildren();
       effectsTimer = null;
-    }, 1600);
+    }, 1950);
   }
 
   function cancelEndingBuildup() {
@@ -359,14 +375,14 @@
       ending: true
     };
     if (isEscape) {
-      // The static escape sprite is already present in the DOM and preloaded.
-      // Reveal it in the exact same update as the ending text, without an
-      // asynchronous decode/crossfade after the ending appears.
-      ++swapVersion;
-      requestedScene = '';
-      cancelFrameFade();
-      commitScene(endingScene);
-      $('game').classList.add('is-escape-finale');
+      // Reuse the tested, decoded gameplay image buffers. This prevents the
+      // dedicated escape-image layer from showing a blank ending on some clients.
+      // The caption is revealed by commitScene *after* the image becomes visible.
+      // If image loading fails, keep the last working Chiikawa frame on screen.
+      setScene(endingScene, {
+        instant: true,
+        onReady: () => $('game').classList.add('is-escape-finale')
+      });
     } else {
       commitScene(endingScene);
       setScene(endingScene);
