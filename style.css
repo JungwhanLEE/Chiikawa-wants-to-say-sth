@@ -424,7 +424,7 @@ button { font-size: 17px; }
   border-radius: 23px;
   border-width: 3px;
   border-color: #aa5d80;
-  box-shadow: 0 6px 0 #f6cede, 0 12px 20px #a85c8015;
+  box-shadow: none;
   overflow-y: auto;
   overscroll-behavior: contain;
   animation: usagi-message-reveal .72s .12s cubic-bezier(.18,1.5,.32,1) both;
