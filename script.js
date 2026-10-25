@@ -206,9 +206,71 @@
   const ENDING_BUILDUP_MS = 1300;
   let endingTimer = null;
   let impactTimer = null;
+  let effectsTimer = null;
   let tapBounce = null;
 
+  // Effects are independent overlays: original character illustrations are untouched.
+  function clearUsagiEffects() {
+    if (effectsTimer !== null) clearTimeout(effectsTimer);
+    effectsTimer = null;
+    $('pushStars').replaceChildren();
+    $('usagiFireworks').replaceChildren();
+  }
+
+  function playPushStars() {
+    if (reduceMotion.matches) return;
+    const layer = $('pushStars');
+    layer.replaceChildren();
+    // Keep all eight stars around the contact point, away from the speech bubble.
+    const directions = [
+      [-46,-34],[-28,-58],[-1,-65],[34,-43],
+      [51,-12],[39,31],[-2,43],[-49,21]
+    ];
+    directions.forEach(([dx,dy],i) => {
+      const star = document.createElement('span');
+      star.className = 'push-star';
+      star.textContent = i%3===0 ? '✧' : '✦';
+      star.style.setProperty('--dx',dx+'px');
+      star.style.setProperty('--dy',dy+'px');
+      star.style.setProperty('--rot',(i%2?-90:115)+'deg');
+      star.style.setProperty('--delay',(i%3*20)+'ms');
+      layer.appendChild(star);
+    });
+    effectsTimer = setTimeout(() => {
+      layer.replaceChildren();
+      effectsTimer = null;
+    }, 590);
+  }
+
+  function playUsagiFireworks() {
+    if (reduceMotion.matches) return;
+    const layer = $('usagiFireworks');
+    layer.replaceChildren();
+    const bursts = [[17,29,0],[81,34,180],[22,74,350],[80,75,490]];
+    const palette=['#f79eb9','#f4c65c','#87d7e5','#b4dda4'];
+    bursts.forEach(([x,y,delay],j) => {
+      for (let i=0;i<8;i++) {
+        const spark = document.createElement('span');
+        const angle = (i*Math.PI)/4;
+        const radius = j%2 ? 37 : 31;
+        spark.className = 'finale-spark';
+        spark.style.left=x+'%';
+        spark.style.top=y+'%';
+        spark.style.backgroundColor=palette[(i+j)%palette.length];
+        spark.style.setProperty('--dx',Math.round(Math.cos(angle)*radius)+'px');
+        spark.style.setProperty('--dy',Math.round(Math.sin(angle)*radius)+'px');
+        spark.style.setProperty('--delay',delay+'ms');
+        layer.appendChild(spark);
+      }
+    });
+    effectsTimer = setTimeout(() => {
+      layer.replaceChildren();
+      effectsTimer = null;
+    }, 1800);
+  }
+
   function cancelEndingBuildup() {
+    clearUsagiEffects();
     if (endingTimer !== null) clearTimeout(endingTimer);
     if (impactTimer !== null) clearTimeout(impactTimer);
     endingTimer = null;
@@ -238,6 +300,7 @@
       impactTimer = null;
       $('knockbackImage').classList.remove('hidden');
       $('game').classList.add('is-knockback');
+      playPushStars();
     }, 110);
     endingTimer = setTimeout(finishUsagiEntrance, 640);
   }
@@ -249,6 +312,8 @@
     $('game').classList.remove('is-usagi-entry', 'is-knockback');
     $('knockbackImage').classList.add('hidden');
     $('game').classList.add('is-usagi-finale');
+    clearUsagiEffects();
+    playUsagiFireworks();
     $('usagiMotion').classList.add('hidden');
     $('usagiFinal').classList.remove('hidden');
     $('usagiImpact').classList.add('hidden');
