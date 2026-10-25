@@ -140,6 +140,29 @@
     $('game').classList.remove('is-ending-transition');
     $('characterMotion').classList.remove('ending-shiver');
   }
+
+  function revealEnding() {
+    // Display the ending independent of image loading/decoding.
+    cancelEndingBuildup();
+    const isEscape = config.ending === 'escape';
+    $('endingBox').classList.toggle('escape-ending', isEscape);
+    $('endingTitle').textContent = isEscape ? '' : '드디어 말했다!';
+    $('endingTitle').classList.toggle('hidden', isEscape);
+    $('endingText').textContent = isEscape
+      ? '치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.'
+      : config.message;
+    $('endingQuote').classList.toggle('hidden', !isEscape);
+    const endingScene = {
+      key: 'ending-' + config.ending,
+      image: isEscape ? 'chiikawa_escape' : 'chiikawa_stage6',
+      label: isEscape ? '' : '드디어 말했다!',
+      hideLabel: isEscape,
+      speech: isEscape ? '우와아아앙!!!' : '아... 말해버렸다!',
+      ending: true
+    };
+    commitScene(endingScene);
+    setScene(endingScene); // Switch artwork when ready; text is already visible.
+  }
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function bounceTapButton() {
@@ -204,28 +227,12 @@
       ++swapVersion;
       requestedScene = '';
       $('game').classList.add('is-ending-transition');
+      $('speech').textContent = '우...';
+      $('speech').closest('.speech-row').classList.remove('hidden');
       $('characterMotion').classList.remove(...motionStageClasses);
       $('characterMotion').classList.add('ending-shiver');
 
-      endingTimer = setTimeout(() => {
-        endingTimer = null;
-        const isEscape = config.ending === 'escape';
-        $('endingBox').classList.toggle('escape-ending', isEscape);
-        $('endingTitle').textContent = isEscape ? '' : '드디어 말했다!';
-        $('endingTitle').classList.toggle('hidden', isEscape);
-        $('endingText').textContent = isEscape
-          ? '치이카와는 결국 부끄러움을 이기지 못하고 도망갔습니다.'
-          : config.message;
-        $('endingQuote').classList.toggle('hidden', !isEscape);
-        setScene({
-          key: 'ending-' + config.ending,
-          image: isEscape ? 'chiikawa_escape' : 'chiikawa_stage6',
-          label: isEscape ? '' : '드디어 말했다!',
-          hideLabel: isEscape,
-          speech: isEscape ? '우와아아앙!!!' : '아... 말해버렸다!',
-          ending: true
-        });
-      }, ENDING_BUILDUP_MS);
+      endingTimer = setTimeout(revealEnding, ENDING_BUILDUP_MS);
     }else render();
   });
   $('retry').addEventListener('click',()=>start(config, previewMode));
