@@ -269,3 +269,108 @@ button { font-size: 17px; }
 @media (prefers-reduced-motion: reduce) {
   .character-image-wrap.ending-shiver { animation: none; }
 }
+
+/* Usagi's two-part hijack ending: the original Chiikawa PNGs are never edited. */
+.character {position:relative}
+.usagi-impact {
+  position:absolute;
+  top:92px;
+  left:12%;
+  z-index:6;
+  font-family:"Jua",sans-serif;
+  font-size:28px;
+  color:#e45877;
+  text-shadow:0 2px white,2px 0 white,-2px 0 white;
+  transform:rotate(-12deg);
+  animation:usagi-impact-pop .45s cubic-bezier(.15,1.5,.3,1) both;
+  pointer-events:none;
+}
+.usagi-art {
+  position:absolute;
+  z-index:4;
+  width:178px;
+  max-width:52%;
+  height:auto;
+  left:calc(50% - 45px);
+  bottom:15px;
+  transform:translateX(160%);
+  pointer-events:none;
+  filter:drop-shadow(0 4px 1px #693d4012);
+}
+#game.is-usagi-entry .usagi-art {
+  animation:usagi-charge .64s cubic-bezier(.22,.9,.32,1.22) both;
+}
+#game.is-usagi-entry #characterMotion {
+  animation:chiikawa-shoved .78s cubic-bezier(.5,0,.8,1) both;
+}
+#game.is-usagi-finale .usagi-art {
+  transform:translateX(0);
+}
+#game.is-usagi-finale #characterMotion {opacity:0}
+#game.is-usagi-entry #tap,
+#game.is-usagi-entry .meter,
+#game.is-usagi-entry .meterhead,
+#game.is-usagi-entry > .muted.small,
+#game.is-usagi-finale #tap,
+#game.is-usagi-finale .meter,
+#game.is-usagi-finale .meterhead,
+#game.is-usagi-finale > .muted.small {display:none}
+#game.is-usagi-finale .speech-row {z-index:5}
+#game.is-usagi-finale .ending {
+  margin-top:12px;
+  background:#fff4f8;
+}
+#game .message-reveal {
+  position:relative;
+  margin:12px 0 18px;
+  padding:23px 14px;
+  border:2px solid #f0afc7;
+  border-radius:18px;
+  background:#fff;
+  color:#a42865;
+  font-family:"Jua",sans-serif;
+  font-size:clamp(23px,6vw,32px);
+  line-height:1.45;
+  text-align:center;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  box-shadow:0 7px 0 #f9dce7,0 13px 22px #b64a7617;
+}
+#game.is-usagi-finale .message-reveal {
+  animation:usagi-message-reveal .72s .12s cubic-bezier(.18,1.5,.32,1) both;
+}
+#game.is-usagi-finale #endingText {
+  font-family:"Jua",sans-serif;
+  font-size:17px;
+  color:#8e737e;
+  margin:16px 0;
+}
+@keyframes usagi-impact-pop {
+  0%{opacity:0;transform:translateY(18px) scale(.3) rotate(-22deg)}
+  65%{opacity:1;transform:translateY(-5px) scale(1.2) rotate(-8deg)}
+  100%{opacity:1;transform:translateY(0) scale(1) rotate(-12deg)}
+}
+@keyframes usagi-charge {
+  0%{transform:translateX(160%) rotate(9deg)}
+  70%{transform:translateX(-9%) rotate(-7deg)}
+  100%{transform:translateX(0) rotate(0)}
+}
+@keyframes chiikawa-shoved {
+  0%,20%{transform:translateX(0) rotate(0);opacity:1}
+  58%{transform:translateX(-22px) rotate(-9deg);opacity:1}
+  100%{transform:translateX(-220px) rotate(-30deg);opacity:0}
+}
+@keyframes usagi-message-reveal {
+  0%{opacity:0;transform:translateY(22px) scale(.65) rotate(-4deg);filter:blur(5px)}
+  62%{opacity:1;transform:translateY(-7px) scale(1.08) rotate(1.5deg);filter:blur(0)}
+  82%{transform:translateY(2px) scale(.985) rotate(-.5deg)}
+  100%{opacity:1;transform:translateY(0) scale(1) rotate(0);filter:blur(0)}
+}
+@media(prefers-reduced-motion:reduce){
+  #game.is-usagi-entry .usagi-art,
+  #game.is-usagi-entry #characterMotion,
+  #game.is-usagi-finale .message-reveal,
+  .usagi-impact {animation:none}
+  #game.is-usagi-entry .usagi-art {transform:translateX(0)}
+  #game.is-usagi-entry #characterMotion{opacity:0}
+}
