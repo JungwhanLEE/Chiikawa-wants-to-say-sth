@@ -503,3 +503,18 @@ button { font-size: 17px; }
     font-size: clamp(27px, 7.5vw, 32px);
   }
 }
+
+/* Smooth five-stage expression swaps: incoming frame overlays the current PNG. */
+.character #stageImage,
+.character #stageImageNext {
+  opacity: 0;
+  transition: opacity 180ms ease-in-out;
+}
+.character #stageImage.frame-visible,
+.character #stageImageNext.frame-visible {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .character #stageImage,
+  .character #stageImageNext { transition: none; }
+}
