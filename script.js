@@ -127,6 +127,19 @@
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0, previewMode=false;
+  let tapBounce = null;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function bounceTapButton() {
+    if (reduceMotion.matches || typeof $('tap').animate !== 'function') return;
+    // Cancel the previous bounce so every rapid tap gets an immediate response.
+    if (tapBounce) tapBounce.cancel();
+    tapBounce = $('tap').animate([
+      {transform:'translateY(2px) scale(0.955)',offset:0},
+      {transform:'translateY(-3px) scale(1.035)',offset:0.46},
+      {transform:'translateY(0) scale(1)',offset:1}
+    ], {duration:190,easing:'cubic-bezier(.2,.8,.3,1)',iterations:1});
+  }
 
   function chooseStageIndex(now) {
     // While a frame is locked, the gauge still changes normally.
@@ -152,7 +165,9 @@
   }
   function stop(){cancelAnimationFrame(frame);frame=0;last=0}
   function start(cfg, isPreview=false){
-    stop();resetScene();config=cfg;value=0;finished=false;previewMode=isPreview;show('game');
+    stop();
+    if (tapBounce) { tapBounce.cancel(); tapBounce = null; }
+    resetScene();config=cfg;value=0;finished=false;previewMode=isPreview;show('game');
     $('gameTitle').textContent=cfg.title;
     $('backToCreator').classList.toggle('hidden',!previewMode);
     $('tap').classList.remove('hidden');$('endingBox').classList.add('hidden');
@@ -164,6 +179,7 @@
   }
   $('tap').addEventListener('click',()=>{
     if(finished)return;
+    bounceTapButton();
     value=Math.min(100,value+5);
     if(value>=100){
       finished=true;stop();render();$('tap').classList.add('hidden');
