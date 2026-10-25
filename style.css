@@ -591,22 +591,15 @@ button { font-size: 17px; }
   .character .push-star,.character .finale-spark{animation:none;display:none}
 }
 
-/* Preloaded escape art appears on the same frame as the escape ending text. */
-#escapeImage {
-  position:absolute;
-  left:50%;
-  top:50%;
-  display:block;
-  width:auto;
-  height:235px;
-  max-width:88%;
-  max-height:100%;
-  object-fit:contain;
-  transform:translate(-50%,-50%);
-  visibility:hidden;
-  pointer-events:none;
+/* Escape mode displays the decoded stage frame instead of a separate image.
+   Keep the visible artwork when the ending replaces the controls. */
+#game.is-escape-finale #characterMotion {opacity:1}
+
+
+/* Usagi's shout now comes before the quieter ending explanation. */
+#game.is-usagi-finale .message-reveal {
+  margin: 8px auto 5px;
 }
-#game.is-escape-finale #escapeImage {visibility:visible}
-#game.is-escape-finale #stageImage,
-#game.is-escape-finale #stageImageNext {visibility:hidden}
-@media(max-width:400px){#escapeImage{height:205px;max-width:90%}}
+#game.is-usagi-finale #endingText {
+  margin: 8px 0 12px;
+}
