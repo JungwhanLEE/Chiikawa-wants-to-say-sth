@@ -25,6 +25,7 @@
     <label class="choice"><input type="radio" name="ending" value="escape" checked> 도망 엔딩</label>
     <label class="choice"><input type="radio" name="ending" value="message"> 우사기 엔딩</label>
     <label class="choice"><input type="radio" name="ending" value="relay"> 릴레이(연속)</label>
+    <label class="choice"><input type="radio" name="ending" value="random"> 랜덤 모드 (도망·우사기 50:50)</label>
   </fieldset>
   <label id="messageWrap" class="hidden">마지막에 보여줄 말<textarea id="messageInput" maxlength="300" placeholder="하고 싶은 말을 입력하세요."></textarea></label>
   <label>난이도<select id="difficulty"><option value="easy">쉬움 (초당 5% 감소)</option><option value="normal" selected>보통 (초당 8% 감소)</option><option value="hard">어려움 (초당 11% 감소)</option></select></label>
@@ -60,4 +61,4 @@
   <button id="tap" class="primary">♡ 꾹꾹... 응원하기!</button>
   <div id="endingBox" class="ending hidden" aria-live="polite"><h2 id="endingTitle"></h2><div id="userMessage" class="message-reveal hidden"></div><p id="endingText"></p><p id="endingQuote" class="hidden">"왜 애를 울려!"</p><button id="retry">↺ 다시 하기</button></div>
   <p id="gameHint" class="muted small">버튼을 빠르게 눌러 100%를 채워주세요.</p>
-</section></main><script src="script.js?v=20261026-retry-arrow-1"></script></body></html>
+</section></main><script src="script.js?v=20261026-random-ending-1"></script></body></html>
