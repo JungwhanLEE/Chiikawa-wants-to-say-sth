@@ -210,10 +210,13 @@
   }
   function show(id){$('creator').classList.toggle('hidden',id!=='creator');$('game').classList.toggle('hidden',id!=='game')}
   let config, value=0, finished=false, last=0, frame=0, previewMode=false;
-  // Relay mode: round 0 escapes, round 1 has Usagi steal the message.
+  // Relay alternates in order; random selects an ending once per playthrough.
   let relayRound = 0;
+  let randomRoundEnding = 'escape';
   function effectiveEnding() {
-    return config.ending === 'relay' ? (relayRound === 0 ? 'escape' : 'message') : config.ending;
+    if (config.ending === 'relay') return relayRound === 0 ? 'escape' : 'message';
+    if (config.ending === 'random') return randomRoundEnding;
+    return config.ending;
   }
   function updateRetryLabel() {
     $('retry').textContent = config.ending === 'relay' && relayRound === 0
@@ -438,6 +441,9 @@
   function start(cfg, isPreview=false, preserveRelayRound=false){
     stop();
     if (!preserveRelayRound) relayRound = 0;
+    // Re-roll for each new game/retry; never change the choice during a run.
+    randomRoundEnding = cfg.ending === 'random'
+      ? (Math.random() < 0.5 ? 'escape' : 'message') : 'escape';
     cancelEndingBuildup();
     $('game').classList.remove('is-escape-finale');
     if (tapBounce) { tapBounce.cancel(); tapBounce = null; }
@@ -448,7 +454,7 @@
     $('endingBox').classList.remove('escape-ending');
     $('endingTitle').classList.remove('hidden');
     $('endingQuote').classList.add('hidden');
-    $('retry').textContent = '다시 하기';
+    $('retry').textContent = '↺ 다시 하기';
     // Stage captions become visible together with the decoded first artwork.
     render();frame=requestAnimationFrame(tick);
   }
@@ -500,13 +506,13 @@
     show('creator');
   });
   document.querySelectorAll('input[name=ending]').forEach(el=>el.addEventListener('change',()=>{
-    $('messageWrap').classList.toggle('hidden',!['message','relay'].includes(document.querySelector('input[name=ending]:checked').value));
+    $('messageWrap').classList.toggle('hidden',!['message','relay','random'].includes(document.querySelector('input[name=ending]:checked').value));
   }));
   $('makeLink').addEventListener('click',()=>{
     const ending=document.querySelector('input[name=ending]:checked').value;
     const cfg={title:$('titleInput').value.trim()||'치이카와가 할 말이 있대...',ending,message:$('messageInput').value.trim(),difficulty:$('difficulty').value,panic:$('panic').checked};
     const feedback = $('createError');
-    if(['message','relay'].includes(ending)&&!cfg.message){
+    if(['message','relay','random'].includes(ending)&&!cfg.message){
       feedback.classList.remove('is-success');
       feedback.setAttribute('role','alert');
       feedback.textContent='우사기 엔딩에서 보여줄 메시지를 입력하세요.';
@@ -535,7 +541,7 @@
   if(params.has('game')){
     try{
       const cfg=decode(params.get('game'));
-      if(!cfg||!['escape','message','relay'].includes(cfg.ending)||!Object.prototype.hasOwnProperty.call(rates,cfg.difficulty)||typeof cfg.title!=='string'||typeof cfg.message!=='string'||typeof cfg.panic!=='boolean')throw Error('invalid');
+      if(!cfg||!['escape','message','relay','random'].includes(cfg.ending)||!Object.prototype.hasOwnProperty.call(rates,cfg.difficulty)||typeof cfg.title!=='string'||typeof cfg.message!=='string'||typeof cfg.panic!=='boolean')throw Error('invalid');
       start(cfg);
     }catch{show('creator');$('createError').textContent='유효하지 않은 게임 링크입니다. 새로 만들어 주세요.'}
   }else show('creator');
