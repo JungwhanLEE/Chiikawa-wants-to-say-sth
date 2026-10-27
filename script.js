@@ -520,7 +520,7 @@
       return;
     }
     const wasCreated = !$('linkArea').classList.contains('hidden');
-    const url=new URL(location.href);url.search='';url.hash='';
+    const url=new URL('play.html', location.href);url.search='';url.hash='';
     url.searchParams.set('game',encode(cfg));$('shareLink').value=url.href;
     $('linkArea').classList.remove('hidden');
     $('copyLink').textContent='링크 복사';
